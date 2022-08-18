@@ -706,4 +706,4 @@ if __name__ == '__main__':
     sched.add_job(getCountDict, 'cron', hour="00", minute="05", id="test_2", args=[today]) # 매일, 사용자에 대한 데이터 수 GET
     sched.start()
 
-    app.run(host='0.0.0.0', port=2019)
+    app.run(host='0.0.0.0', port=2017)
