@@ -116,7 +116,9 @@ def register_en():
             "attach_count": 0,
             "daily": 0,
             "CIN_count": 0,
-            "cal_list": []
+            "cal_list": [],
+            "daily_list": [],  # 1일 설문 여부 - Added 25 Aug
+            "daily_flag": 0    # 1일 설문 가능 - Added 25 Aug
         }
 
         if id in mongo.db.list_collection_names() : # 회원가입 되어있는 Sid 접근시 
@@ -180,12 +182,13 @@ def login():
                 daily_cal = member_id["daily"]
                 cin_count = member_id["CIN_count"]
                 cal_list = member_id["cal_list"]
+                daily_list = member_id["daily_list"]
                 reg_y = member_id["register_year"]
                 reg_m = member_id["register_month"]
                 reg_d = member_id["register_day"]
 
                 if daily_cal == 1 : #갤럭시 사용자
-                    return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                    return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
                     if daily_cal == 2: #아이폰 사용자
                         count = member_id['submit_count']
@@ -235,12 +238,13 @@ def login_en():
                 daily_cal = member_id["daily"]
                 cin_count = member_id["CIN_count"]
                 cal_list = member_id["cal_list"]
+                daily_list = member_id["daily_list"]
                 reg_y = member_id["register_year"]
                 reg_m = member_id["register_month"]
                 reg_d = member_id["register_day"]
 
                 if daily_cal == 1 : #갤럭시 사용자
-                    return render_template('calendar_en.html', sid=id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                    return render_template('calendar_en.html', sid=id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
                     if daily_cal == 2: #아이폰 사용자
                         count = member_id['submit_count']
@@ -370,7 +374,7 @@ def moody2():
     md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
-    members.update_one({'id': s_id}, {'$push': {'daily_list': 1}}) # 1일 설문 제출 Added 25 Aug
+    # members.update_one({'id': s_id}, {'$push': {'daily_list': 1}}) # 1일 설문 제출 Added 25 Aug
     members.update_one({'id': s_id}, {'$inc': {'daily_flag': 1}}) # 1일 설문 제출 Added 25 Aug
     print("flag is changed.")
     
@@ -490,12 +494,11 @@ def ajax3():
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
-    cal_list = member_id["cal_list"]
     cin_count = member_id["CIN_count"]
-    
     daily_cal = member_id["daily"]
     cin_count = member_id["CIN_count"]
     cal_list = member_id["cal_list"]
+    daily_list = member_id["daily_list"]
     reg_y = member_id["register_year"]
     reg_m = member_id["register_month"]
     reg_d = member_id["register_day"]
@@ -503,15 +506,14 @@ def ajax3():
     if member_id['weekly_count'] > 0:
         return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
     else:
-        if member_id["daily_flag"] == 0:
-            if member_id['daily'] == 1:
-                return jsonify(render_template('android_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
-            else:
-                if member_id['daily'] == 2:
-                    return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
-        elif member_id["daily_flag"] == 1:
-            flash("이미 설문을 완료하셨습니다. 내일 설문해주세요")
-            return jsonify(render_template('login.html'))
+        if member_id['daily'] == 1:
+            # return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+
+            # return render_template('daily_calendar.html', sid=x_survey, cin=cin_count, cal = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+            return jsonify(render_template('daily_calendar.html', sid=x_survey, cnt=count, fcnt=fcount, dai=daily_list, wcnt=wcount, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+        else:
+            if member_id['daily'] == 2:
+                return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
 
 #캘린더_갤럭시 사용자_영어
 @app.route('/ajax3_en', methods=['GET', 'POST'])
@@ -527,7 +529,79 @@ def ajax3_en():
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
     cal_list = member_id["cal_list"]
+    daily_list = member_id["daily_list"]
     cin_count = member_id["CIN_count"]
+
+    if member_id['weekly_count'] > 0:
+        return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+    else:
+        if member_id["daily_flag"] == 0:
+            if member_id['daily'] == 1:
+                return jsonify(render_template('daily_calendar.html', sid=x_survey, cnt=count, fcnt=fcount, dai=daily_list, wcnt=wcount))
+            else:
+                if member_id['daily'] == 2:
+                    return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif member_id["daily_flag"] == 1:
+            flash("You have already completed the survey. please submit tomorrow")
+            return jsonify(render_template('login.html'))
+
+#캘린더_갤럭시 사용자
+@app.route('/ajax4', methods=['GET', 'POST'])
+def ajax4():
+    data = request.get_json()
+    x_survey = list(data.values())[0]
+    member_id = members.find_one({'id': x_survey})
+
+    count = member_id['submit_count']
+    wcount = member_id['weekly_count']
+    hcount = member_id['health_count']
+    gcount = member_id['gyro_count']
+    acount = member_id['acc_count']
+    fcount = member_id['attach_count']
+    cal_list = member_id["cal_list"]
+    cin_count = member_id["CIN_count"]
+    daily_cal = member_id["daily"]
+    cin_count = member_id["CIN_count"]
+    daily_list = member_id["daily_list"]
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
+
+    if member_id['weekly_count'] > 0:
+        return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+    else:
+        if member_id["daily_flag"] == 0:
+            if member_id['daily'] == 1:
+                # return jsonify(render_template('daily_calendar.html', sid=x_survey, cnt=count, fcnt=fcount, cal=daily_list, wcnt=wcount))
+                return jsonify(render_template('android_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+            else:
+                if member_id['daily'] == 2:
+                    return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif member_id["daily_flag"] == 1:
+            flash("이미 설문을 완료하셨습니다. 내일 설문해주세요")
+            return jsonify(render_template('login.html'))
+
+#캘린더_갤럭시 사용자
+@app.route('/ajax4_en', methods=['GET', 'POST'])
+def ajax4_en():
+    data = request.get_json()
+    x_survey = list(data.values())[0]
+    member_id = members.find_one({'id': x_survey})
+
+    count = member_id['submit_count']
+    wcount = member_id['weekly_count']
+    hcount = member_id['health_count']
+    gcount = member_id['gyro_count']
+    acount = member_id['acc_count']
+    fcount = member_id['attach_count']
+    cal_list = member_id["cal_list"]
+    cin_count = member_id["CIN_count"]
+    daily_cal = member_id["daily"]
+    cin_count = member_id["CIN_count"]
+    daily_list = member_id["daily_list"]
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
 
     if member_id['weekly_count'] > 0:
         return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
@@ -537,7 +611,7 @@ def ajax3_en():
                 return jsonify(render_template('android_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
             else:
                 if member_id['daily'] == 2:
-                    return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+                    return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
         elif member_id["daily_flag"] == 1:
             flash("You have already completed the survey. please submit tomorrow")
             return jsonify(render_template('login.html'))
@@ -557,7 +631,7 @@ def justfile():
     reg_m = member_id["register_month"]
     reg_d = member_id["register_day"]
     cin_count = member_id["CIN_count"]
-    cal_list = member_id["cal_list"]
+    daily_list = member_id["daily_list"]
     
     y, m, d = date.split('-')
     y = int(y); m = int(m); d = int(d)
@@ -580,7 +654,7 @@ def justfile():
     else:
         flash("제출된 파일이 아니거나 제출이 가능한 날짜가 아닙니다.")
     
-    return jsonify(render_template('calendar.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+    return jsonify(render_template('calendar.html', sid=s_id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
 
 # 이전 파일 처리 eng
 @app.route('/justfile_en', methods=['POST'])
@@ -597,7 +671,7 @@ def justfile_en():
     reg_m = member_id["register_month"]
     reg_d = member_id["register_day"]
     cin_count = member_id["CIN_count"]
-    cal_list = member_id["cal_list"]
+    daily_list = member_id["daily_list"]
     
     y, m, d = date.split('-')
     y = int(y); m = int(m); d = int(d)
@@ -624,7 +698,7 @@ def justfile_en():
     else:
         flash("the file is not subitted or the date is not available for submission.") # Added 25 Aug 
                 
-    return jsonify(render_template('calendar_en.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+    return jsonify(render_template('calendar_en.html', sid=s_id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
 
 
 #팝업창
@@ -717,6 +791,20 @@ def getCountDict(today): # Count number of container in Mobius Server
                     members.update_one({'id': k}, {'$push': {'cal_list':1}})
                     continue
     return dict_CIN
+
+def dailycheck(today): 
+    docs = members.find()
+    for i in docs:
+        member_id = members.find_one({'id': i["id"]})
+        if member_id != None :
+            daily_flag = member_id["daily_flag"]
+            if daily_flag == 0:
+                members.update_one({'id': i["id"]}, {'$push': {'daily_list':0}})
+            else:
+                if daily_flag == 1:
+                    members.update_one({'id': i["id"]}, {'$push': {'daily_list':1}})
+                    members.update_one({'id':i["id"]}, {'$set':{'daily_flag':0}})
+                    
     
 if __name__ == '__main__':
     
@@ -726,6 +814,7 @@ if __name__ == '__main__':
 
     sched.add_job(count, 'cron', hour="00", minute="01", id="test_1") #토요일마다
     sched.add_job(getCountDict, 'cron', hour="00", minute="05", id="test_2", args=[today]) # 매일, 사용자에 대한 데이터 수 GET
+    sched.add_job(dailycheck, 'cron', hour="05", minute="00", id="test_3", args=[today]) # 매일, 설문조사 체크
     sched.start()
 
     app.run(host='0.0.0.0', port=2017)
