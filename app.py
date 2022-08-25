@@ -69,7 +69,9 @@ def register():
             "attach_count": 0,
             "daily": 0,
             "CIN_count": 0,
-            "cal_list": []
+            "cal_list": [],
+            "daily_list": [],  # 1일 설문 여부 - Added 25 Aug
+            "daily_flag": 0    # 1일 설문 가능 - Added 25 Aug
         }
 
         if id in mongo.db.list_collection_names() :
@@ -124,9 +126,9 @@ def register_en():
             mongo.db.create_collection(id)  #회원가입시 컬렉션 생성
         
         if not (id and pwd and pwd2): # 아이디, 비밀번호 중 하나라도 미입력시
-            return "모두 입력해주세요"
+            return "Please enter all"
         elif pwd != pwd2: # 비밀번호가 틀렸을 시
-            return "비밀번호를 확인해주세요."
+            return "Please confirm your password."
         else: # 정상 로그인
             members.insert_one(post)
             return render_template("one_time_en.html", data=id)
@@ -183,7 +185,7 @@ def login():
                 reg_d = member_id["register_day"]
 
                 if daily_cal == 1 : #갤럭시 사용자
-                    return render_template('cal_test.html', sid=id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                    return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
                     if daily_cal == 2: #아이폰 사용자
                         count = member_id['submit_count']
@@ -197,10 +199,10 @@ def login():
                             return render_template('weekly.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
                         else:
                             if member_id['daily'] == 1:
-                                return render_template('gal_daily.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
+                                return render_template('android_daily.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
                             else:
                                 if member_id['daily'] == 2:
-                                    return render_template('daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount)     
+                                    return render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount)     
 
         else: #비밀번호가 틀리면
             flash('비밀번호가 일치하지 않습니다.')
@@ -225,7 +227,7 @@ def login_en():
 
             if reg_check is None:
                 flash("The survey for membership registration has not been completed.")
-                return render_template('one_time.html', data=id)
+                return render_template('one_time_en.html', data=id)
             else:
                 session['id'] = request.form['id'] 
                 session.permanent = True
@@ -238,7 +240,7 @@ def login_en():
                 reg_d = member_id["register_day"]
 
                 if daily_cal == 1 : #갤럭시 사용자
-                    return render_template('cal_test_en.html', sid=id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                    return render_template('calendar_en.html', sid=id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
                     if daily_cal == 2: #아이폰 사용자
                         count = member_id['submit_count']
@@ -252,14 +254,14 @@ def login_en():
                             return render_template('weekly_en.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
                         else:
                             if member_id['daily'] == 1:
-                                return render_template('gal_daily_en.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
+                                return render_template('android_daily_en.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
                             else:
                                 if member_id['daily'] == 2:
-                                    return render_template('daily_en.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount)     
+                                    return render_template('ios_daily_en.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount)     
 
         else: #비밀번호가 틀리면
             flash('The password you entered does not match.')
-            return render_template('login.html')
+            return render_template('login_en.html')
 
 
 #로그아웃
@@ -278,7 +280,7 @@ def moody():
     s_id = evl['sid']
     mood = evl['mood']
     date = evl['date']
-        
+
     md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
@@ -320,11 +322,12 @@ def moody_en():
     evl = eval(l)
     s_id = evl['sid']
     mood = evl['mood']
-    # date = datetime.today()
-    
-    md = { "mood": mood  }
+    date = evl['date']
+
+    md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
+    
     if 'filed' in request.files:
         f = request.files['filed']
         print("file1 is", f)
@@ -362,12 +365,14 @@ def moody2():
     evl = eval(l)
     s_id = evl['sid']
     mood = evl['mood']
-    # date = datetime.today()
-    
-    # md = { "mood": mood , "date": date }
-    md = { "mood": mood }
+    date = evl['date']
+
+    md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
+    members.update_one({'id': s_id}, {'$push': {'daily_list': 1}}) # 1일 설문 제출 Added 25 Aug
+    members.update_one({'id': s_id}, {'$inc': {'daily_flag': 1}}) # 1일 설문 제출 Added 25 Aug
+    print("flag is changed.")
     
     if 'filed[]' in request.files:
         f = request.files.getlist('filed[]')
@@ -391,9 +396,9 @@ def moody2_en():
     evl = eval(l)
     s_id = evl['sid']
     mood = evl['mood']
-    # date = datetime.today()
-    
-    md = { "mood": mood  }
+    date = evl['date']
+
+    md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
     
@@ -442,10 +447,10 @@ def weekly():
     fcount = member_id['attach_count']
     
     if member_id['daily'] == 1:
-        return jsonify(render_template("gal_daily.html", sid=x_survey, cnt=count, fcnt=fcount))
+        return jsonify(render_template("android_daily.html", sid=x_survey, cnt=count, fcnt=fcount))
     else:
         if member_id['daily'] == 2:
-            return jsonify(render_template('daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+            return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
 
 #Weekly_영어
 @app.route('/weekly_en', methods=['GET', 'POST'])
@@ -457,7 +462,7 @@ def weekly_en():
     survey_result.insert_one(data)
     data.pop('_id')
     member_id = members.find_one({'id': x_survey})
-    members.update_one({'id': id}, {'$inc': {'weekly_count': -1}}) # Weekly survey 완료시-> count가 1씩 감소
+    members.update_one({'id': x_survey}, {'$inc': {'weekly_count': -1}}) # Weekly survey 완료시-> count가 1씩 감소
 
     count = member_id['submit_count']
     wcount = member_id['weekly_count']
@@ -465,12 +470,12 @@ def weekly_en():
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
-
+    
     if member_id['daily'] == 1:
-        return jsonify(render_template("gal_daily_en.html", sid=x_survey, cnt=count, fcnt=fcount))
+        return jsonify(render_template("android_daily_en.html", sid=x_survey, cnt=count, fcnt=fcount))
     else:
         if member_id['daily'] == 2:
-            return jsonify(render_template('daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+            return jsonify(render_template('ios_daily_en.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
 
 #캘린더_갤럭시 사용자
 @app.route('/ajax3', methods=['GET', 'POST'])
@@ -485,16 +490,28 @@ def ajax3():
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
+    cal_list = member_id["cal_list"]
     cin_count = member_id["CIN_count"]
+    
+    daily_cal = member_id["daily"]
+    cin_count = member_id["CIN_count"]
+    cal_list = member_id["cal_list"]
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
 
     if member_id['weekly_count'] > 0:
         return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
     else:
-        if member_id['daily'] == 1:
-            return jsonify(render_template('gal_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
-        else:
-            if member_id['daily'] == 2:
-                return jsonify(render_template('daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        if member_id["daily_flag"] == 0:
+            if member_id['daily'] == 1:
+                return jsonify(render_template('android_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+            else:
+                if member_id['daily'] == 2:
+                    return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif member_id["daily_flag"] == 1:
+            flash("이미 설문을 완료하셨습니다. 내일 설문해주세요")
+            return jsonify(render_template('login.html'))
 
 #캘린더_갤럭시 사용자_영어
 @app.route('/ajax3_en', methods=['GET', 'POST'])
@@ -509,16 +526,21 @@ def ajax3_en():
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
+    cal_list = member_id["cal_list"]
     cin_count = member_id["CIN_count"]
 
     if member_id['weekly_count'] > 0:
-        return jsonify(render_template('weekly_en.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+        return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
     else:
-        if member_id['daily'] == 1:
-            return jsonify(render_template('gal_daily_en.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
-        else:
-            if member_id['daily'] == 2:
-                return jsonify(render_template('daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        if member_id["daily_flag"] == 0:
+            if member_id['daily'] == 1:
+                return jsonify(render_template('android_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+            else:
+                if member_id['daily'] == 2:
+                    return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif member_id["daily_flag"] == 1:
+            flash("You have already completed the survey. please submit tomorrow")
+            return jsonify(render_template('login.html'))
 
 # 이전 파일 처리
 @app.route('/justfile', methods=['POST'])
@@ -543,12 +565,6 @@ def justfile():
     cal_list = member_id["cal_list"]
 
     if cal_list[index] == 0:
-        cal_list[index] = 1
-        members.update_one({'id': s_id}, { '$set': {'cal_list': cal_list}})
-        md = { "date": date }
-        survey_coll = mongo.db.get_collection(s_id)
-        survey_coll.insert_one(md)
-
         if 'filed' in request.files:
             f = request.files['filed']
             print("file is", f)
@@ -557,10 +573,14 @@ def justfile():
             fname = f.filename
             members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
             fs.put(contents, filename=fname, attachDate=date)
+
+            # 파일이 있어야만 색깔이 바뀌도록
+            cal_list[index] = 1
+            members.update_one({'id': s_id}, { '$set': {'cal_list': cal_list}})
     else:
-        pass
-        
-    return jsonify(render_template('cal_test.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+        flash("제출된 파일이 아니거나 제출이 가능한 날짜가 아닙니다.")
+    
+    return jsonify(render_template('calendar.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
 
 # 이전 파일 처리 eng
 @app.route('/justfile_en', methods=['POST'])
@@ -585,11 +605,6 @@ def justfile_en():
     cal_list = member_id["cal_list"]
 
     if cal_list[index] == 0:
-        cal_list[index] = 1
-        members.update_one({'id': s_id}, { '$set': {'cal_list': cal_list}})
-        md = { "date": date }
-        survey_coll = mongo.db.get_collection(s_id)
-        survey_coll.insert_one(md)
 
         if 'filed' in request.files:
             f = request.files['filed']
@@ -599,10 +614,17 @@ def justfile_en():
             fname = f.filename
             members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
             fs.put(contents, filename=fname, attachDate=date)
+
+            # 파일이 있어야만 색깔이 바뀌도록
+            cal_list[index] = 1
+            members.update_one({'id': s_id}, { '$set': {'cal_list': cal_list}})
+            md = { "date": date }
+            survey_coll = mongo.db.get_collection(s_id)
+            survey_coll.insert_one(md)
     else:
-        pass
-        
-    return jsonify(render_template('cal_test_en.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+        flash("the file is not subitted or the date is not available for submission.") # Added 25 Aug 
+                
+    return jsonify(render_template('calendar_en.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
 
 
 #팝업창
@@ -634,7 +656,7 @@ def count(): # function for increasing weekly_count
     if now == '토요일':
         members.update_many({}, {'$inc': {'weekly_count': 1}}) #collection에 있는 모든 id에서 count가 1씩 증가
 
-def countCIN(aeName, today): #모비우스 cnt 개수 가져오기
+def countCIN(name, aeName, today): #모비우스 cnt 개수 가져오기
     cra = datetime.datetime.strptime(today, "%Y%m%d")
     cra = cra - timedelta(1)
     cra = '&cra=' + cra.strftime("%Y%m%d") + 'T150000'

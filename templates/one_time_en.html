@@ -15,8 +15,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <link rel="stylesheet" href="../static/style.css" type="text/css">
-    <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-        crossorigin="anonymous"></script>
     <title> 
         [KNIH] AT SCH Univ.
     </title>
@@ -68,7 +66,7 @@
     <form id="form1">
         <div class="form-control">
 			<label for="q1" id="label-q1">
-                1. Please Input phone number
+                1. Please input phone number
             </label>
             <input type="tel" id="phonenum" maxlength="3" onkeyup="moveCursora(this)" placeholder="010" name="q1-1" required/> -
             <input type="tel" id="phonenum1" maxlength="4" onkeyup="moveCursorb(this)" placeholder="1234" name="q1-2" required/> -
@@ -104,7 +102,7 @@
 
         <div class="form-control">
 			<label for="q4" id="label-q4">
-            4. Please input birth of year
+            4. Please input the year of your birthday
             </label>
             <input type="tel" id="age" maxlength="4" placeholder="1999" name="q4" oninput="limitNumber(this, 4)" required/>
         </div>
@@ -125,7 +123,7 @@
 
         <div class="form-control">
 			<label for="q6" id="label-q6">
-                6. Please select height
+                6. Please select your height
             </label>
 			<label for="q6-1">
                 <input  type="radio" id="q6-1" name="q6" value="1" checked/>
@@ -152,7 +150,7 @@
 
         <div class="form-control">
 			<label for="q7" id="label-q7">
-                7. Please select weigth
+                7. Please select your weight
             </label>
 			<label for="q7-1">
                 <input  type="radio" id="q7-1" name="q7" value="1" checked/>
@@ -297,7 +295,7 @@
 
         <div class="form-control">
 			<label for="mq3" id="label-mq3">
-                3. I have recently become fidgety or mean-spirited
+                3. I have recently become restless
             </label>
 			<label for="mq3-1">
                 <input type="radio"name="mq3" id="mq3-1" value="1" checked/>
@@ -413,28 +411,54 @@
     <script>
         let ID= '{{data}}'
         function final() {
+            var r = document.querySelector('input[type=radio][name=q8]:checked')
+            var chk = "0";
+            var con = true;
             if(document.getElementsByName("q1-1")[0].value=="") {
 				alert("Please enter question 1")
+                con = false;
 				document.getElementsByName("q1-1")[0].focus()
 			}
             else if(document.getElementsByName("q1-2")[0].value=="") {
 				alert("Please enter question 1")
 				document.getElementsByName("q1-2")[0].focus()
+                con = false;
 			}
             else if(document.getElementsByName("q1-3")[0].value=="") {
 				alert("Please enter question 1")
 				document.getElementsByName("q1-3")[0].focus()
+                con = false;
 			}
             else if(document.getElementsByName("q4")[0].value=="") {
 				alert("Please enter question 4")
 				document.getElementsByName("q4")[0].focus()
+                con = false;
+			}
+            else if(r.value=="1") {
+                var e = document.getElementsByName('q9');
+                for (var i=0; i < 5; i++) {
+                    if (e[i].checked == true) {
+                        chk = e[i].value;
+                    }
+                }
+                if (chk == "0") {
+                    alert("Please enter question 9")
+				    document.getElementsByName("q9")[0].focus()
+                    con = false;
+                }
+                else {
+                    con = true;
+                }
 			}
             else {
-                document.getElementById("submit_button").innerHTML = "Submitted";
+                con = true;
+            }
+            if (con == true) {
+                document.getElementById("submit_button").innerHTML = "제출 완료";
                 var formData1 = $('#form1').serializeArray()
                 var formData2 = $('#form2').serializeArray()
                 var postdata = {
-                    ID, '1_formData1':formData1, '1_formData2':formData2
+                    ID, 'check':1, '1_formData1':formData1, '1_formData2':formData2
                 }
                 console.log(postdata)
                 $.ajax({
@@ -445,7 +469,7 @@
                     contentType: "application/json",
                     success: function(data){
                         // location.href="http://114.71.220.59:2017/final_en"
-                        location.href = "http://192.168.0.6:2019/final_en"
+                        location.href = "http://192.168.0.17:2017/final"
                     },
                     error: function(request, status, error){
                         alert('ajax 통신 실패')

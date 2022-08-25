@@ -77,8 +77,8 @@
 					}
 					
 					if (check_boolean) {
-						date = Date()
 						var sid = '{{sid}}'
+						date = Date()
 						var data = {
 							"mood": $('input[name="mood"]:checked').val(),
 							"sid": sid,
@@ -99,8 +99,8 @@
 							processData: false,
 							enctype: 'multipart/form-data',
 							success: function (data) {
-								//location.href="http://114.71.220.59:2017/final"
-								location.href = "http://192.168.0.17:2019/final"
+								location.href="http://114.71.220.59:2017/final"
+								location.href="http://192.168.0.17:2017/final"
 							}
 						})
 					}
@@ -110,7 +110,8 @@
 	});
 
 	function fileCheckF(file_path, num, checking) {
-		var gyro = "gyroscope"; var acc = "acceleration"; var health = "health"
+		var gyro = "gyroscope"; var acc = "acceleration"; 
+		var acc2 = "accelometer"; var health = "health"
 		var file_name = file_path.substring(file_path.lastIndexOf('\\') + 1, file_path.length);
 		var name = file_name.split('_')[1]
 
@@ -125,7 +126,7 @@
 		}
 
 		else if (num == 1) {
-			if (name != acc && checking == false) {
+			if ((name != acc) && checking == false) {
 				alert("가속도 파일을 제출해주세요")
 				return false
 			}

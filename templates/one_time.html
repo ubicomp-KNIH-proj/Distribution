@@ -15,8 +15,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <link rel="stylesheet" href="../static/style.css" type="text/css">
-    <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-        crossorigin="anonymous"></script>
     <title> 
         [KNIH] AT SCH Univ.
     </title>
@@ -45,13 +43,6 @@
                 $("input:radio[name='q9']").prop('checked', false)
             }
         });
-        $('#submit_button').on('click', function() {
-            var q2 = document.getElementsByName("q2");
-            if(!q2[0].checked) {
-                q2[0].focus()
-                return false
-            }
-        })
     });
     function limitNumber(el, maxlength) {
         if (el.value.length > maxlength) {
@@ -460,7 +451,7 @@
                 var formData1 = $('#form1').serializeArray()
                 var formData2 = $('#form2').serializeArray()
                 var postdata = {
-                    ID, '1_formData1':formData1, '1_formData2':formData2, 'check': 1
+                    ID, 'check':1, '1_formData1':formData1, '1_formData2':formData2
                 }
                 console.log(postdata)
                 $.ajax({
@@ -469,9 +460,9 @@
                     data: JSON.stringify(postdata),
                     dataType : 'JSON',
                     contentType: "application/json",
-                    success: function(data){  
-                        // location.href="http://114.71.220.59:2017/final" #모비우스 서버에 이걸로
-                        location.href = "http://192.168.0.17:2019/final"
+                    success: function(data){
+                        // location.href="http://114.71.220.59:2017/final"
+                        location.href = "http://192.168.0.17:2017/final"
                     },
                     error: function(request, status, error){
                         alert('ajax 통신 실패')

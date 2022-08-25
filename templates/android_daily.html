@@ -29,10 +29,12 @@
 						alert("다시 확인해주세요")
 					}
                     else {
+						date = Date()
                         var sid = '{{sid}}'
                         var data = {
                             "mood": $('input[name="mood"]:checked').val(),
-                            "sid": sid
+                            "sid": sid,
+							"date": date
                         }
                         var formData = new FormData();
                         document.getElementById("submit").innerHTML = "제출중.... 완료될 때까지 기다려주세요";
@@ -49,19 +51,20 @@
                             processData: false,
                             enctype: 'multipart/form-data',
                             success: function (data) {
-								location.href = "http://192.168.0.17:2019/final"
+								location.href = "http://192.168.0.17:2017/final"
                                 // location.href="http://114.71.220.59:2017/final"
-                                //location.href = "http://192.168.0.6:2019/final"
                             }
                         })
                     }
 			    }
                 else {
                     var sid = '{{sid}}'
-                    var data = {
-                        "mood": $('input[name="mood"]:checked').val(),
-                        "sid": sid
-                    }
+					date = Date()
+					var data = {
+						"mood": $('input[name="mood"]:checked').val(),
+						"sid": sid,
+						"date": date
+					}
                     var formData = new FormData();
                     document.getElementById("submit").innerHTML = "제출중.... 완료될 때까지 기다려주세요";
                     formData.append('data', new Blob([JSON.stringify(data)], { type: "application/json" }));
@@ -77,8 +80,8 @@
                         processData: false,
                         enctype: 'multipart/form-data',
                         success: function (data) {
-                    	// location.href="http://114.71.220.59:2017/final"
-                         location.href = "http://192.168.0.17:2019/final"
+                    		// location.href="http://114.71.220.59:2017/final"
+                         	location.href = "http://192.168.0.17:2017/final"
                         }
                     })
                 }
@@ -91,10 +94,8 @@
 
 	<h1 id="title_mood">오늘 하루 어떠셨나요?</h1>
 	<p>설문횟수: {{cnt}}, 제출횟수: {{fcnt}}</p>
-	<!-- Create Form -->
 	<form id="form" action="/moody2" method="POST" name="fm">
 		<div class="form-control">
-			<!-- Input Type Radio Button -->
 			<label for="recommed-1">
 				<img src="../static/great.png" width="100" height="110">
 				<input type="radio" id="mood" style="width: 30px; height: 30px;" value="5" name="mood">
@@ -132,7 +133,6 @@
 			</div>
 			
         </form>
-		<!-- <input type="file" id="f" name="filed" multiple> -->
 	</form>
 	<button type="submit" value="submit" id="submit" onclick=final()">
 		제출하기
