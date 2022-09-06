@@ -29,13 +29,13 @@
             border-radius: 8px;
         }
         body {
-            background-color: #c4e4ed;
+            background-color: #c5e8f2;
             font-family: Verdana;
             text-align: center;
         }
 
         #etc {
-            background-color: #c4e4ed;
+            background-color: #bac9cd;
             font-family: Arial, sans-serif;
             padding: 20px 20px;
             font-size: 15px;
@@ -499,21 +499,22 @@
             <td align="center">목</td>
             <td align="center">금</td>
             <td align="center">
-                <font color="skyblue">토
+                <!-- <font color="skyblue">토 -->
             </td>
-        </tr>
+        <!-- </tr> -->
     </table>
     Date: <input type="date" id="input_date" name="adate"><br>
-    Survey: <input type="file" id="f" name="filed" multiple="multiple">
+
+    <!-- Date: <input type="date" id="input_date" name="adate"><br> -->
     <br>
     <p id="etc" styple="text-align: center">
-        Date에는 빨간색으로 표시된 날짜를, File에는 해당 날짜에 맞는 text 파일이 아닌 "tar 파일"을 넣어주세요.<br><br>
-        해당 날짜에 데이터가 정확하게 수집되었다고 인식하고, 빨간색 표시가 초록색 표시로 바뀝니다.
+        Date에는 빨간색으로 표시된 날짜를 선택해주시고  버튼을 눌러주세요.<br><br>
+        해당 날짜에 설문을 진행했다 인식하고, 빨간색 표시가 초록색 표시로 바뀝니다.
     </p>
     <div align="center">
         <!-- <button style="width: 15%;" align="center" id="submit" onclick="fileAttach()"> -->
         <button style="width: 100%;" class="btn btn-primary" id="submit" onclick="fileAttach()">
-            이전 날짜 <br>파일 전송</button>
+            지난 설문 <br> 하러 가기</button>
     </div>
     <p id="etc" style="text-align: center">
         <img id="jul1" src="../static/sred.png" style="width:300px"><br>
@@ -694,10 +695,9 @@
             var formData = new FormData();
             document.getElementById("submit").innerHTML = "제출중....";
             formData.append('data', new Blob([JSON.stringify(postdata)], { type: "application/json" }));
-            formData.append('filed', document.getElementById("f").files[0]);
             $.ajax({
                 type: 'POST',
-                url: '{{url_for("justfile")}}',
+                url: '{{url_for("presurvey")}}',
                 data: formData,
                 multiple: true,
                 contentType: false,

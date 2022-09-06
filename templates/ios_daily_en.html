@@ -1,3 +1,11 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+        alert("{{messages[-1]}}")
+    </script>
+    {% endif %}
+{% endwith %}
+
 <!DOCTYPE HTML>
 
 <html lang="kr">
@@ -19,7 +27,7 @@
 	$(document).ready(function () {
 		$("#submit").click(function () {
 			if ($(':radio[name="mood"]:checked').length < 1) {
-				alert("답변을 입력해주세요");
+				alert("Please enter the answer");
 				$('#mood1').focus();
 				event.preventDefault();
 			}
@@ -99,8 +107,8 @@
 							processData: false,
 							enctype: 'multipart/form-data',
 							success: function (data) {
-								location.href="http://114.71.220.59:2017/final"
-								location.href="http://192.168.0.17:2017/final"
+								// location.href="http://114.71.220.59:2017/final_en"
+								location.href="http://192.168.0.17:2017/final_en"
 							}
 						})
 					}
@@ -110,13 +118,14 @@
 	});
 
 	function fileCheckF(file_path, num, checking) {
-		var gyro = "gyroscope"; var acc = "acceleration"; var health = "health"
+		var gyro = "gyroscope"; var acc = "acceleration"; 
+		var acc2 = "accelometer"; var health = "health"
 		var file_name = file_path.substring(file_path.lastIndexOf('\\') + 1, file_path.length);
 		var name = file_name.split('_')[1]
 
 		if (num == 0) {
 			if (name != gyro && checking == false) {
-				alert("Please check the file name")
+				alert("Please attach Gyroscope file")
 				return false
 			}
 			else {
@@ -126,7 +135,7 @@
 
 		else if (num == 1) {
 			if (name != acc && checking == false) {
-				alert("Please check the file name")
+				alert("Please attach Acceleration  file")
 				return false
 			}
 			else {
@@ -136,7 +145,7 @@
 
 		else if (num == 2) {
 			if (name != health && checking == false) {
-				alert("Please check the file name")
+				alert("Please attach Health file")
 				return false
 			}
 			else {
@@ -150,7 +159,8 @@
 <body>
 
 	<h1 id="title_mood">How was your day?</h1>
-	<p>number of surveys: {{cnt}}, number of submissions: {{fcnt}}</p>
+	<p>Number of submission: {{cnt}}, Number of health: {{hcnt}}</p>
+	<p>Number of gyroscope: {{gcnt}}, Number of acceleration: {{acnt}}</p>
 	<!-- Daily Survey Form -->
 	<form id="form" action="/moody" method="POST" name="fm">
 		<div class="form-control">
@@ -196,7 +206,7 @@
 		<a style="font-size: 20px;">2-1. Health data</a><input type="file" id="f3" name="filed3" multiple="multiple">
 	</form>
 	<button type="submit" value="submit" id="submit">
-		제출하기
+		Submit
 	</button>
 </body>
 

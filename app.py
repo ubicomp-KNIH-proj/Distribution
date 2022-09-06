@@ -1,5 +1,6 @@
-from logging import setLogRecordFactory
-from sched import scheduler
+# Ubi_Lab, Dept. of Internet of Things, ML, SCH Univ.
+# Author: Changwon Lee - Chaewon Song
+
 from flask import *
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
@@ -22,12 +23,10 @@ app.config['SECRET_KEY'] = "2019"
 app.config["MONGO_URI"] = "mongodb://localhost:27017/survey"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 mongo = PyMongo(app)
-
 client = MongoClient('localhost', 27017)
 members = mongo.db.members
 db = client['survey']
 IoT_1 = "http://114.71.220.59:7579"
-# Ubi_Lab, Dept. of Internet of Things, ML, SCH Univ.
 ######### Config #########
 
 
@@ -56,37 +55,37 @@ def register():
         today_m = now.month
         today_d = now.day
         post = {
-            "id": id,
-            "pwd": pwd,
-            "register_year": today_y,
-            "register_month": today_m,
-            "register_day": today_d,
-            "gyro_count": 0,
-            "acc_count": 0,
-            "health_count": 0,
-            "submit_count": 0,
-            "weekly_count": 0,
-            "attach_count": 0,
-            "daily": 0,
-            "CIN_count": 0,
-            "cal_list": [],
-            "daily_list": [],  # 1일 설문 여부 - Added 25 Aug
-            "daily_flag": 0    # 1일 설문 가능 - Added 25 Aug
+            "id": id,                  # SID (개인식별번호)
+            "pwd": pwd,                # 비밀번호
+            "register_year": today_y,  # 가입 연도 
+            "register_month": today_m, # 가입 월
+            "register_day": today_d,   # 가입 날짜
+            "gyro_count": 0,           # 자이로 파일 개수 for iOS
+            "acc_count": 0,            # 가속도 파일 개수 for iOS
+            "health_count": 0,         # 헬스   파일 개수 for iOS
+            "submit_count": 0,         # 설문 제출 횟수
+            "weekly_count": 0,         # 주간 설문 여부
+            "attach_count": 0,         # 파일 제출 횟수 for Android
+            "daily": 0,                # 핸드폰 종류
+            "CIN_count": 0,            # Mobius 컨테이너 개수
+            "cal_list": [],            # Mobius 컨테이너 충족 여부
+            "daily_list": [],          # 1일 설문 여부 - Added 25 Aug
+            "daily_flag": 0            # 1일 설문 가능 - Added 25 Aug
         }
 
-        if id in mongo.db.list_collection_names() :
+        if id in mongo.db.list_collection_names() :          # 회원가입 되어있는 Sid 접근시
             flash("이미 가입한 계정이 있습니다.")
             return render_template("register.html", data=id)
         else :
-            mongo.db.create_collection(id)  #회원가입시 컬렉션 생성
+            mongo.db.create_collection(id)                   #회원가입시 컬렉션 생성
         
-        if not (id and pwd and pwd2): # 아이디, 비밀번호 중 하나라도 미입력시
+        if not (id and pwd and pwd2):                        # 아이디, 비밀번호 중 하나라도 미입력시
             return "모두 입력해주세요"
-        elif pwd != pwd2: # 비밀번호가 틀렸을 시
+        elif pwd != pwd2:                                    # 비밀번호가 틀렸을 시
             return "비밀번호를 확인해주세요."
-        else: # 정상 로그인
+        else:                                                # 정상 가입 완료
             members.insert_one(post)
-            return render_template("one_time.html", data=id)
+            return render_template("one_time.html", data=id) # One-time Survey 
 
 # 회원가입_영어
 @app.route('/register_en', methods=['GET','POST'])
@@ -103,39 +102,39 @@ def register_en():
         today_m = now.month
         today_d = now.day
         post = {
-            "id": id,
-            "pwd": pwd,
-            "register_year": today_y,
-            "register_month": today_m,
-            "register_day": today_d,
-            "gyro_count": 0,
-            "acc_count": 0,
-            "health_count": 0,
-            "submit_count": 0,
-            "weekly_count": 0,
-            "attach_count": 0,
-            "daily": 0,
-            "CIN_count": 0,
-            "cal_list": [],
-            "daily_list": [],  # 1일 설문 여부 - Added 25 Aug
-            "daily_flag": 0    # 1일 설문 가능 - Added 25 Aug
+            "id": id,                  # SID (개인식별번호)
+            "pwd": pwd,                # 비밀번호
+            "register_year": today_y,  # 가입 연도 
+            "register_month": today_m, # 가입 월
+            "register_day": today_d,   # 가입 날짜
+            "gyro_count": 0,           # 자이로 파일 개수 for ios
+            "acc_count": 0,            # 가속도 파일 개수 for ios
+            "health_count": 0,         # 헬스   파일 개수 for ios
+            "submit_count": 0,         # 설문 제출 횟수
+            "weekly_count": 0,         # 주간 설문 여부
+            "attach_count": 0,         # 파일 제출 횟수 for Android
+            "daily": 0,                # 핸드폰 종류
+            "CIN_count": 0,            # Mobius 컨테이너 개수
+            "cal_list": [],            # Mobius 컨테이너 충족 여부
+            "daily_list": [],          # 1일 설문 여부 - Added 25 Aug
+            "daily_flag": 0            # 1일 설문 가능 - Added 25 Aug
         }
 
-        if id in mongo.db.list_collection_names() : # 회원가입 되어있는 Sid 접근시 
+        if id in mongo.db.list_collection_names() :             # 회원가입 되어있는 Sid 접근시 
             flash("Already signed up for an account. Please check again!")
             return render_template("register_en.html", data=id)
         else :
-            mongo.db.create_collection(id)  #회원가입시 컬렉션 생성
+            mongo.db.create_collection(id)                      #회원가입시 컬렉션 생성
         
-        if not (id and pwd and pwd2): # 아이디, 비밀번호 중 하나라도 미입력시
+        if not (id and pwd and pwd2):                           # 아이디, 비밀번호 중 하나라도 미입력시
             return "Please enter all"
-        elif pwd != pwd2: # 비밀번호가 틀렸을 시
+        elif pwd != pwd2:                                       # 비밀번호가 틀렸을 시
             return "Please confirm your password."
-        else: # 정상 로그인
+        else:                                                   # 정상 가입 완료 
             members.insert_one(post)
-            return render_template("one_time_en.html", data=id)
+            return render_template("one_time_en.html", data=id) # One-time Survey 
 
-# One-time survey 아이폰, 갤럭시 사용자 구분
+# 초기설문 처리 아이폰, 안드로이드 사용자 구분
 @app.route('/ajax', methods=['GET', 'POST'])
 def ajax():
     data = request.get_json()
@@ -147,15 +146,15 @@ def ajax():
     daily = data['1_formData1']
     daily_f = list(m['value'] for m in daily)
 
-    if daily_f[3] == '1':
+    if daily_f[3] == '1':        # 안드로이드 사용자
         members.update_one({'id':x_survey}, {'$set':{'daily':1}})
     else:
-        if daily_f[3] == '2':
+        if daily_f[3] == '2':    # 아이폰 사용자
             members.update_one({'id':x_survey}, {'$set':{'daily':2}})
 
     return jsonify(result = "success", result2= data, result3=daily)
     
-#로그인
+#로그인 시도 
 @app.route('/user/login', methods = ['POST'])
 def login():
     id = 'S' + request.form['id']
@@ -163,19 +162,19 @@ def login():
     session['id'] = id
     user = members.find_one({'id':id}, {'pwd':pwd})
 
-    if user is None: #members에 없음
+    if user is None:                                   # members에 없음
         flash("접속하신 계정은 존재하지 않는 계정입니다.")
         return render_template('login.html')
     else: #members에 있음
         member_id = members.find_one({'id': id})
-        if member_id['pwd'] == pwd: #비밀번호가 맞는지 확인
+        if member_id['pwd'] == pwd:                    # 비밀번호가 맞는지 확인
             reg_coll = mongo.db.get_collection(id) 
-            reg_check = reg_coll.find_one({'check':1}) #해당 컬렉션에 onetime 결과가 있는지 확인
+            reg_check = reg_coll.find_one({'check':1}) # 해당 컬렉션에 onetime 결과가 있는지 확인
 
-            if reg_check is None:
+            if reg_check is None:                      # 초기 설문 결과가 없다면
                 flash("회원가입을 이어서 진행합니다.")
                 return render_template('one_time.html', data=id)
-            else:
+            else:                                      # 초기 설문 결과가 있다면
                 session['id'] = request.form['id'] 
                 session.permanent = True
 
@@ -187,31 +186,18 @@ def login():
                 reg_m = member_id["register_month"]
                 reg_d = member_id["register_day"]
 
-                if daily_cal == 1 : #갤럭시 사용자
+                if daily_cal == 1 :                    # 안드로이드 사용자 -> 파일 캘린더 
                     return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
-                    if daily_cal == 2: #아이폰 사용자
-                        count = member_id['submit_count']
-                        wcount = member_id['weekly_count']
-                        hcount = member_id['health_count']
-                        gcount = member_id['gyro_count']
-                        acount = member_id['acc_count']
-                        fcount = member_id['attach_count']
+                    if daily_cal == 2:                 #아이폰 사용자 -> 데일리 캘린더
+                        return jsonify(render_template('daily_calendar.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+  
 
-                        if member_id['weekly_count'] > 0:
-                            return render_template('weekly.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
-                        else:
-                            if member_id['daily'] == 1:
-                                return render_template('android_daily.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
-                            else:
-                                if member_id['daily'] == 2:
-                                    return render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount)     
-
-        else: #비밀번호가 틀리면
+        else:                                          #비밀번호가 틀리면
             flash('비밀번호가 일치하지 않습니다.')
             return render_template('login.html')
 
-#로그인_영어
+#로그인 시도 Eng ver
 @app.route('/user/login_en', methods = ['POST'])
 def login_en():
     id = 'S' + request.form['id']
@@ -219,19 +205,19 @@ def login_en():
     session['id'] = id
     user = members.find_one({'id':id}, {'pwd':pwd})
 
-    if user is None: #members에 없음
+    if user is None:                                   # members에 없음
         flash("The account you accessed does not exist")
-        return render_template('login_en.html')
+        return render_template('login.html')
     else: #members에 있음
         member_id = members.find_one({'id': id})
-        if member_id['pwd'] == pwd: #비밀번호가 맞는지 확인
+        if member_id['pwd'] == pwd:                    # 비밀번호가 맞는지 확인
             reg_coll = mongo.db.get_collection(id) 
-            reg_check = reg_coll.find_one({'check':1}) #해당 컬렉션에 onetime 결과가 있는지 확인
+            reg_check = reg_coll.find_one({'check':1}) # 해당 컬렉션에 onetime 결과가 있는지 확인
 
-            if reg_check is None:
+            if reg_check is None:                      # 초기 설문 결과가 없다면
                 flash("The survey for membership registration has not been completed.")
-                return render_template('one_time_en.html', data=id)
-            else:
+                return render_template('one_time.html', data=id)
+            else:                                      # 초기 설문 결과가 있다면
                 session['id'] = request.form['id'] 
                 session.permanent = True
 
@@ -243,29 +229,16 @@ def login_en():
                 reg_m = member_id["register_month"]
                 reg_d = member_id["register_day"]
 
-                if daily_cal == 1 : #갤럭시 사용자
-                    return render_template('calendar_en.html', sid=id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                if daily_cal == 1 :                    # 안드로이드 사용자 -> 파일 캘린더 
+                    return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
-                    if daily_cal == 2: #아이폰 사용자
-                        count = member_id['submit_count']
-                        wcount = member_id['weekly_count']
-                        hcount = member_id['health_count']
-                        gcount = member_id['gyro_count']
-                        acount = member_id['acc_count']
-                        fcount = member_id['attach_count']
+                    if daily_cal == 2:                 #아이폰 사용자 -> 데일리 캘린더
+                        return jsonify(render_template('daily_calendar.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+  
 
-                        if member_id['weekly_count'] > 0:
-                            return render_template('weekly_en.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
-                        else:
-                            if member_id['daily'] == 1:
-                                return render_template('android_daily_en.html', sid=id, cnt=count, fcnt=fcount, wcnt=wcount)
-                            else:
-                                if member_id['daily'] == 2:
-                                    return render_template('ios_daily_en.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount)     
-
-        else: #비밀번호가 틀리면
+        else:                                          #비밀번호가 틀리면
             flash('The password you entered does not match.')
-            return render_template('login_en.html')
+            return render_template('login.html')
 
 
 #로그아웃
@@ -274,16 +247,12 @@ def logout():
     session.pop('id', None) # 세션 종료
     return render_template('login.html')
 
-#Daily_아이폰 사용자
+#Daily_아이폰 사용자 - 당일 제출
 @app.route('/moody', methods=['POST'])
 def moody():  
     data = request.files['data']
-    st = data.read()
-    l = st.decode()
-    evl = eval(l)
-    s_id = evl['sid']
-    mood = evl['mood']
-    date = evl['date']
+    st = data.read(); l = st.decode(); evl = eval(l)
+    s_id = evl['sid']; mood = evl['mood']; date = evl['date']
 
     md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
@@ -291,7 +260,6 @@ def moody():
 
     if 'filed' in request.files:
         f = request.files['filed']
-        print("file1 is", f)
         contents = f.read()
         fs = gridfs.GridFS(db, s_id)
         fname = f.filename
@@ -299,7 +267,6 @@ def moody():
         fs.put(contents, filename=fname)
     if 'filed2' in request.files:
         f2 = request.files['filed2']
-        print("file2 is", f2)
         contents = f2.read()
         fs2 = gridfs.GridFS(db, s_id)
         fname2 = f2.filename
@@ -307,7 +274,6 @@ def moody():
         fs2.put(contents, filename=fname2)
     if 'filed3' in request.files:
         f3 = request.files['filed3']
-        print("file3 is", f3)
         contents = f3.read()
         fs3 = gridfs.GridFS(db, s_id)
         fname3 = f3.filename
@@ -317,24 +283,19 @@ def moody():
     members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}})
     return render_template('login.html')
 
-#Daily_아이폰 사용자_영어
+#Daily_아이폰 사용자 Eng ver - 당일 제출
 @app.route('/moody_en', methods=['POST'])
 def moody_en():  
     data = request.files['data']
-    st = data.read()
-    l = st.decode()
-    evl = eval(l)
-    s_id = evl['sid']
-    mood = evl['mood']
-    date = evl['date']
+    st = data.read(); l = st.decode(); evl = eval(l)
+    s_id = evl['sid']; mood = evl['mood']; date = evl['date']
 
     md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
-    
+
     if 'filed' in request.files:
         f = request.files['filed']
-        print("file1 is", f)
         contents = f.read()
         fs = gridfs.GridFS(db, s_id)
         fname = f.filename
@@ -342,7 +303,6 @@ def moody_en():
         fs.put(contents, filename=fname)
     if 'filed2' in request.files:
         f2 = request.files['filed2']
-        print("file2 is", f2)
         contents = f2.read()
         fs2 = gridfs.GridFS(db, s_id)
         fname2 = f2.filename
@@ -350,7 +310,6 @@ def moody_en():
         fs2.put(contents, filename=fname2)
     if 'filed3' in request.files:
         f3 = request.files['filed3']
-        print("file3 is", f3)
         contents = f3.read()
         fs3 = gridfs.GridFS(db, s_id)
         fname3 = f3.filename
@@ -358,27 +317,21 @@ def moody_en():
         fs3.put(contents, filename=fname3)
 
     members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}})
-    return render_template('weekly.html')
+    return render_template('login_en.html')
 
-#Daily_갤럭시 사용자
+#Daily_갤럭시 사용자 - 당일 제출
 @app.route('/moody2', methods=['POST'])
 def moody2():  
     data = request.files['data']
-    st = data.read()
-    l = st.decode()
-    evl = eval(l)
-    s_id = evl['sid']
-    mood = evl['mood']
-    date = evl['date']
+    st = data.read(); l = st.decode(); evl = eval(l)
+    s_id = evl['sid']; mood = evl['mood']; date = evl['date']
 
     md = { "mood": mood , "date": date }
-    survey_coll = mongo.db.get_collection(s_id)
-    survey_coll.insert_one(md)
-    # members.update_one({'id': s_id}, {'$push': {'daily_list': 1}}) # 1일 설문 제출 Added 25 Aug
-    members.update_one({'id': s_id}, {'$inc': {'daily_flag': 1}}) # 1일 설문 제출 Added 25 Aug
-    print("flag is changed.")
+    survey_coll = mongo.db.get_collection(s_id)                     # 해당 SID의 컬렉션
+    survey_coll.insert_one(md)                                      # 해당 SID의 컬렉션에 Daily Survey 설문 결과 저장
+    members.update_one({'id': s_id}, {'$set': {'daily_flag': 1}})   # 1일 설문 제출 완료 Added 25 Aug
     
-    if 'filed[]' in request.files:
+    if 'filed[]' in request.files:                                  # 저장할 파일이 있다면 for Bigdata
         f = request.files.getlist('filed[]')
         for file in f:
           print("file is", file)
@@ -388,25 +341,22 @@ def moody2():
           fs.put(contents, filename=fname)
         members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
     
-    members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}})
+    members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}}) # 제출 횟수 증가 
     return render_template('weekly.html')
 
-#Daily_갤럭시 사용자_영어
+#Daily_갤럭시 사용자_영어 - 당일 제출 
 @app.route('/moody2_en', methods=['POST'])
 def moody2_en():  
     data = request.files['data']
-    st = data.read()
-    l = st.decode()
-    evl = eval(l)
-    s_id = evl['sid']
-    mood = evl['mood']
-    date = evl['date']
+    st = data.read(); l = st.decode(); evl = eval(l)
+    s_id = evl['sid']; mood = evl['mood']; date = evl['date']
 
     md = { "mood": mood , "date": date }
-    survey_coll = mongo.db.get_collection(s_id)
-    survey_coll.insert_one(md)
+    survey_coll = mongo.db.get_collection(s_id)                     # 해당 SID의 컬렉션
+    survey_coll.insert_one(md)                                      # 해당 SID의 컬렉션에 Daily Survey 설문 결과 저장
+    members.update_one({'id': s_id}, {'$set': {'daily_flag': 1}})   # 1일 설문 제출 완료 Added 25 Aug
     
-    if 'filed[]' in request.files:
+    if 'filed[]' in request.files:                                  # 저장할 파일이 있다면 for Bigdata
         f = request.files.getlist('filed[]')
         for file in f:
           print("file is", file)
@@ -416,7 +366,7 @@ def moody2_en():
           fs.put(contents, filename=fname)
         members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
     
-    members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}})
+    members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}}) # 제출 횟수 증가 
     return render_template('weekly_en.html')
 
 #마지막 페이지
@@ -431,57 +381,73 @@ def final_en():
     session.pop('id', None)
     return render_template("final_en.html")
 
-#Weekly
+# 주간 설문 
 @app.route('/weekly', methods=['GET', 'POST'])
 def weekly():
     data = request.get_json()
-    x_survey = list(data.values())[0]
-    survey_result = mongo.db.get_collection(x_survey)
+    s_id = list(data.values())[0]
+    survey_coll = mongo.db.get_collection(s_id)                      # 해당 SID의 설문 컬렉션 
     del data['ID']
-    survey_result.insert_one(data)
+    survey_coll.insert_one(data)                                     # 해당 SID의 설문 컬렉션에 주간 설문 저장
     data.pop('_id')
-    member_id = members.find_one({'id': x_survey})
-    members.update_one({'id': x_survey}, {'$inc': {'weekly_count': -1}}) # Weekly survey 완료시-> count가 1씩 감소
+    member_id = members.find_one({'id': s_id})
+    members.update_one({'id': s_id}, {'$inc': {'weekly_count': -1}}) # 주간 설문 완료시-> count가 1씩 감소
 
     count = member_id['submit_count']
-    wcount = member_id['weekly_count']
     hcount = member_id['health_count']
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
-    
-    if member_id['daily'] == 1:
-        return jsonify(render_template("android_daily.html", sid=x_survey, cnt=count, fcnt=fcount))
-    else:
-        if member_id['daily'] == 2:
-            return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+    wcount = member_id['weekly_count']
+    daily_flag = member_id['daily_flag']
 
-#Weekly_영어
+    if wcount > 0:
+        return jsonify(render_template('weekly.html', sid=s_id, cnt=count, fcnt=fcount, wcnt=wcount))
+    else:
+        if daily_flag == 0:
+            if member_id['daily'] == 1:
+                return jsonify(render_template('android_daily.html', sid=s_id, cnt=count, fcnt=fcount))
+            else:
+                if member_id['daily'] == 2:
+                    return jsonify(render_template('ios_daily.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif daily_flag == 1:
+            flash("이미 설문을 완료하셨습니다. 내일 설문해주세요")
+            return jsonify(render_template('login.html'))
+
+# 주간 설문_영어
 @app.route('/weekly_en', methods=['GET', 'POST'])
 def weekly_en():
     data = request.get_json()
-    x_survey = list(data.values())[0]
-    survey_result = mongo.db.get_collection(x_survey)
+    s_id = list(data.values())[0]
+    survey_coll = mongo.db.get_collection(s_id)                      # 해당 SID의 설문 컬렉션 
     del data['ID']
-    survey_result.insert_one(data)
+    survey_coll.insert_one(data)                                     # 해당 SID의 설문 컬렉션에 주간 설문 저장
     data.pop('_id')
-    member_id = members.find_one({'id': x_survey})
-    members.update_one({'id': x_survey}, {'$inc': {'weekly_count': -1}}) # Weekly survey 완료시-> count가 1씩 감소
+    member_id = members.find_one({'id': s_id})
+    members.update_one({'id': s_id}, {'$inc': {'weekly_count': -1}}) # 주간 설문 완료시-> count가 1씩 감소
 
     count = member_id['submit_count']
-    wcount = member_id['weekly_count']
     hcount = member_id['health_count']
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
-    
-    if member_id['daily'] == 1:
-        return jsonify(render_template("android_daily_en.html", sid=x_survey, cnt=count, fcnt=fcount))
-    else:
-        if member_id['daily'] == 2:
-            return jsonify(render_template('ios_daily_en.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+    wcount = member_id['weekly_count']
+    daily_flag = member_id['daily_flag']
 
-#캘린더_갤럭시 사용자
+    if wcount > 0:
+        return jsonify(render_template('weekly_en.html', sid=s_id, cnt=count, fcnt=fcount, wcnt=wcount))
+    else:
+        if daily_flag == 0:
+            if member_id['daily'] == 1:
+                return jsonify(render_template('android_daily_en.html', sid=s_id, cnt=count, fcnt=fcount))
+            else:
+                if member_id['daily'] == 2:
+                    return jsonify(render_template('ios_daily_en.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif daily_flag == 1:
+            flash("You have already completed the survey. please submit tomorrow")
+            return jsonify(render_template('login_en.html'))
+
+# 파일 캘린더 처리 - 갤럭시 사용자
 @app.route('/ajax3', methods=['GET', 'POST'])
 def ajax3():
     data = request.get_json()
@@ -494,10 +460,6 @@ def ajax3():
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
-    cin_count = member_id["CIN_count"]
-    daily_cal = member_id["daily"]
-    cin_count = member_id["CIN_count"]
-    cal_list = member_id["cal_list"]
     daily_list = member_id["daily_list"]
     reg_y = member_id["register_year"]
     reg_m = member_id["register_month"]
@@ -507,15 +469,12 @@ def ajax3():
         return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
     else:
         if member_id['daily'] == 1:
-            # return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
-
-            # return render_template('daily_calendar.html', sid=x_survey, cin=cin_count, cal = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
-            return jsonify(render_template('daily_calendar.html', sid=x_survey, cnt=count, fcnt=fcount, dai=daily_list, wcnt=wcount, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+            return jsonify(render_template('daily_calendar.html', sid=x_survey, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
         else:
             if member_id['daily'] == 2:
                 return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
 
-#캘린더_갤럭시 사용자_영어
+#파일 캘린더_갤럭시 사용자_영어
 @app.route('/ajax3_en', methods=['GET', 'POST'])
 def ajax3_en():
     data = request.get_json()
@@ -528,91 +487,76 @@ def ajax3_en():
     gcount = member_id['gyro_count']
     acount = member_id['acc_count']
     fcount = member_id['attach_count']
-    cal_list = member_id["cal_list"]
     daily_list = member_id["daily_list"]
-    cin_count = member_id["CIN_count"]
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
 
     if member_id['weekly_count'] > 0:
-        return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+        return jsonify(render_template('weekly_en.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
     else:
-        if member_id["daily_flag"] == 0:
-            if member_id['daily'] == 1:
-                return jsonify(render_template('daily_calendar.html', sid=x_survey, cnt=count, fcnt=fcount, dai=daily_list, wcnt=wcount))
-            else:
-                if member_id['daily'] == 2:
-                    return jsonify(render_template('ios_daily.html', sid=id, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
-        elif member_id["daily_flag"] == 1:
-            flash("You have already completed the survey. please submit tomorrow")
-            return jsonify(render_template('login.html'))
+        if member_id['daily'] == 1:
+            return jsonify(render_template('daily_calendar_en.html', sid=x_survey, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+        else:
+            if member_id['daily'] == 2:
+                return jsonify(render_template('ios_daily_en.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
 
-#캘린더_갤럭시 사용자
+# 설문 캘린더
 @app.route('/ajax4', methods=['GET', 'POST'])
 def ajax4():
     data = request.get_json()
-    x_survey = list(data.values())[0]
-    member_id = members.find_one({'id': x_survey})
+    s_id = list(data.values())[0]
+    print(s_id)
+    member = members.find_one({'id': s_id})  # members의 s_id를 가지고 있는 다큐먼트
 
-    count = member_id['submit_count']
-    wcount = member_id['weekly_count']
-    hcount = member_id['health_count']
-    gcount = member_id['gyro_count']
-    acount = member_id['acc_count']
-    fcount = member_id['attach_count']
-    cal_list = member_id["cal_list"]
-    cin_count = member_id["CIN_count"]
-    daily_cal = member_id["daily"]
-    cin_count = member_id["CIN_count"]
-    daily_list = member_id["daily_list"]
-    reg_y = member_id["register_year"]
-    reg_m = member_id["register_month"]
-    reg_d = member_id["register_day"]
-
-    if member_id['weekly_count'] > 0:
-        return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+    count = member['submit_count']           # s_id를 가지고 있는 다큐먼트의 제출 횟수
+    wcount = member['weekly_count']          # s_id를 가지고 있는 다큐먼트의 Weekly Survey 제출 여부
+    daily_flag = member['daily_flag']        # s_id를 가지고 있는 다큐먼트의 하루 Daily Survey 제출 여부
+    hcount = member['health_count']          # s_id를 가지고 있는 다큐먼트의 헬스   제출 횟수 for iOS
+    gcount = member['gyro_count']            # s_id를 가지고 있는 다큐먼트의 각속도 제출 횟수 for iOS
+    acount = member['acc_count']             # s_id를 가지고 있는 다큐먼트의 가속도 제출 횟수 for iOS
+    fcount = member['attach_count']          # s_id를 가지고 있는 다큐먼트의 파일   제출 횟수 for Android
+    
+    if wcount > 0:
+        return jsonify(render_template('weekly.html', sid=s_id, cnt=count, fcnt=fcount, wcnt=wcount))
     else:
-        if member_id["daily_flag"] == 0:
-            if member_id['daily'] == 1:
-                # return jsonify(render_template('daily_calendar.html', sid=x_survey, cnt=count, fcnt=fcount, cal=daily_list, wcnt=wcount))
-                return jsonify(render_template('android_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+        if daily_flag == 0:
+            if member['daily'] == 1:
+                return jsonify(render_template('android_daily.html', sid=s_id, cnt=count, fcnt=fcount))
             else:
-                if member_id['daily'] == 2:
-                    return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
-        elif member_id["daily_flag"] == 1:
+                if member['daily'] == 2:
+                    return jsonify(render_template('ios_daily.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif daily_flag == 1:
             flash("이미 설문을 완료하셨습니다. 내일 설문해주세요")
             return jsonify(render_template('login.html'))
+        
 
-#캘린더_갤럭시 사용자
-@app.route('/ajax4_en', methods=['GET', 'POST'])
-def ajax4_en():
+# 설문 캘린더_ver en
+@app.route('/ajax4', methods=['GET', 'POST'])
+def ajax4():
     data = request.get_json()
-    x_survey = list(data.values())[0]
-    member_id = members.find_one({'id': x_survey})
+    s_id = list(data.values())[0]
+    print(s_id)
+    member = members.find_one({'id': s_id})  # members의 s_id를 가지고 있는 다큐먼트
 
-    count = member_id['submit_count']
-    wcount = member_id['weekly_count']
-    hcount = member_id['health_count']
-    gcount = member_id['gyro_count']
-    acount = member_id['acc_count']
-    fcount = member_id['attach_count']
-    cal_list = member_id["cal_list"]
-    cin_count = member_id["CIN_count"]
-    daily_cal = member_id["daily"]
-    cin_count = member_id["CIN_count"]
-    daily_list = member_id["daily_list"]
-    reg_y = member_id["register_year"]
-    reg_m = member_id["register_month"]
-    reg_d = member_id["register_day"]
-
-    if member_id['weekly_count'] > 0:
-        return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+    count = member['submit_count']           # s_id를 가지고 있는 다큐먼트의 제출 횟수
+    wcount = member['weekly_count']          # s_id를 가지고 있는 다큐먼트의 Weekly Survey 제출 여부
+    daily_flag = member['daily_flag']        # s_id를 가지고 있는 다큐먼트의 하루 Daily Survey 제출 여부
+    hcount = member['health_count']          # s_id를 가지고 있는 다큐먼트의 헬스   제출 횟수 for iOS
+    gcount = member['gyro_count']            # s_id를 가지고 있는 다큐먼트의 각속도 제출 횟수 for iOS
+    acount = member['acc_count']             # s_id를 가지고 있는 다큐먼트의 가속도 제출 횟수 for iOS
+    fcount = member['attach_count']          # s_id를 가지고 있는 다큐먼트의 파일   제출 횟수 for Android
+    
+    if wcount > 0:
+        return jsonify(render_template('weekly_en.html', sid=s_id, cnt=count, fcnt=fcount, wcnt=wcount))
     else:
-        if member_id["daily_flag"] == 0:
-            if member_id['daily'] == 1:
-                return jsonify(render_template('android_daily.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+        if daily_flag == 0:
+            if member['daily'] == 1:
+                return jsonify(render_template('android_daily_en.html', sid=s_id, cnt=count, fcnt=fcount))
             else:
-                if member_id['daily'] == 2:
-                    return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
-        elif member_id["daily_flag"] == 1:
+                if member['daily'] == 2:
+                    return jsonify(render_template('ios_daily_en.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
+        elif daily_flag == 1:
             flash("You have already completed the survey. please submit tomorrow")
             return jsonify(render_template('login.html'))
 
@@ -620,8 +564,7 @@ def ajax4_en():
 @app.route('/justfile', methods=['POST'])
 def justfile(): 
     data = request.files['data'] 
-    st = data.read()
-    l = st.decode()
+    st = data.read(); l = st.decode()
     evl = eval(l)
     s_id = evl['sid']
     date = evl['dt']
@@ -631,7 +574,6 @@ def justfile():
     reg_m = member_id["register_month"]
     reg_d = member_id["register_day"]
     cin_count = member_id["CIN_count"]
-    daily_list = member_id["daily_list"]
     
     y, m, d = date.split('-')
     y = int(y); m = int(m); d = int(d)
@@ -651,18 +593,121 @@ def justfile():
             # 파일이 있어야만 색깔이 바뀌도록
             cal_list[index] = 1
             members.update_one({'id': s_id}, { '$set': {'cal_list': cal_list}})
+        else:
+            flash("파일을 제출해 주세요")
     else:
         flash("제출된 파일이 아니거나 제출이 가능한 날짜가 아닙니다.")
     
-    return jsonify(render_template('calendar.html', sid=s_id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+    return jsonify(render_template('calendar.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
 
-# 이전 파일 처리 eng
+# 이전 파일 처리 Eng ver
 @app.route('/justfile_en', methods=['POST'])
 def justfile_en(): 
+    data = request.files['data'] 
+    st = data.read(); l = st.decode()
+    evl = eval(l)
+    s_id = evl['sid']
+    date = evl['dt']
+    member_id = members.find_one({'id': s_id})
+
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
+    cin_count = member_id["CIN_count"]
+    
+    y, m, d = date.split('-')
+    y = int(y); m = int(m); d = int(d)
+    index = int(calIndexSearch(reg_m, reg_d, m, d))
+    cal_list = member_id["cal_list"]
+
+    if cal_list[index] == 0:
+        if 'filed' in request.files:
+            f = request.files['filed']
+            print("file is", f)
+            contents = f.read()
+            fs = gridfs.GridFS(db, s_id)
+            fname = f.filename
+            members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
+            fs.put(contents, filename=fname, attachDate=date)
+
+            # 파일이 있어야만 색깔이 바뀌도록
+            cal_list[index] = 1
+            members.update_one({'id': s_id}, { '$set': {'cal_list': cal_list}})
+        else:
+            flash("Please attach your file")
+    else:
+        flash("The file is not subitted or the date is not available for submission.") # Added 25 Aug 
+    
+    return jsonify(render_template('calendar_en.html', sid=s_id, cin=cin_count, cal=cal_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+
+
+# 이전 설문 조사 Add 30 Aug
+# 단순 redirecting
+@app.route('/presurvey', methods=['POST'])
+def presurvey():
+    data = request.files['data'] 
+    st = data.read(); l = st.decode(); evl = eval(l)
+    s_id = evl['sid']; date = evl['dt']
+    member_id = members.find_one({'id': s_id})
+
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
+    daily_list = member_id["daily_list"]
+    fcount = member_id['attach_count']
+    count = member_id['submit_count']
+    
+    y, m, d = date.split('-')
+    y = int(y); m = int(m); d = int(d)
+    index = int(calIndexSearch(reg_m, reg_d, m, d))
+    daily_list = member_id["daily_list"]
+
+    if daily_list[index] == 0:
+        return jsonify(render_template('previous_daily.html', sid=s_id, cnt=count, fcnt=fcount, dt=date)) # 이전 설문 화면으로 보내기
+
+    else:
+        flash("이미 해당 날짜의 설문을 진행하셨습니다.") # Added 30 Aug 
+
+    return jsonify(render_template('daily_calendar.html', sid=s_id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+
+# 이전 설문 조사 Add 30 Aug
+# 단순 redirecting Ver eng
+@app.route('/presurvey_en', methods=['POST'])
+def presurvey_en():
+    data = request.files['data'] 
+    st = data.read(); l = st.decode(); evl = eval(l)
+    s_id = evl['sid']; date = evl['dt']
+    member_id = members.find_one({'id': s_id})
+
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
+    daily_list = member_id["daily_list"]
+    fcount = member_id['attach_count']
+    count = member_id['submit_count']
+    
+    y, m, d = date.split('-')
+    y = int(y); m = int(m); d = int(d)
+    index = int(calIndexSearch(reg_m, reg_d, m, d))
+    daily_list = member_id["daily_list"]
+
+    if daily_list[index] == 0:
+        return jsonify(render_template('previous_daily_en.html', sid=s_id, cnt=count, fcnt=fcount, dt=date)) # 이전 설문 화면으로 보내기
+
+    else:
+        flash("You have already completed the survey for that date.") # Added 30 Aug 
+
+    return jsonify(render_template('daily_calendar_en.html', sid=s_id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+
+
+# 지난 설문 처리
+@app.route('/lastsurvey', methods=['POST'])
+def lastsurvey(): 
     data = request.files['data'] 
     st = data.read()
     l = st.decode()
     evl = eval(l)
+    mood = evl['mood']
     s_id = evl['sid']
     date = evl['dt']
     member_id = members.find_one({'id': s_id})
@@ -670,36 +715,65 @@ def justfile_en():
     reg_y = member_id["register_year"]
     reg_m = member_id["register_month"]
     reg_d = member_id["register_day"]
-    cin_count = member_id["CIN_count"]
     daily_list = member_id["daily_list"]
-    
+
     y, m, d = date.split('-')
     y = int(y); m = int(m); d = int(d)
     index = int(calIndexSearch(reg_m, reg_d, m, d))
-    cal_list = member_id["cal_list"]
+    daily_list = member_id["daily_list"]
+        
+    if daily_list[index] == 0: # 인덱스에 해당하는 값이 0 이어야만
+        members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
+        md = { "mood": mood , "date": date }
+        survey_coll = mongo.db.get_collection(s_id)
+        survey_coll.insert_one(md)
 
-    if cal_list[index] == 0:
+        daily_list[index] = 1
+        members.update_one({'id': s_id}, { '$set': {'daily_list': daily_list}})
+        members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}})
 
-        if 'filed' in request.files:
-            f = request.files['filed']
-            print("file is", f)
-            contents = f.read()
-            fs = gridfs.GridFS(db, s_id)
-            fname = f.filename
-            members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
-            fs.put(contents, filename=fname, attachDate=date)
-
-            # 파일이 있어야만 색깔이 바뀌도록
-            cal_list[index] = 1
-            members.update_one({'id': s_id}, { '$set': {'cal_list': cal_list}})
-            md = { "date": date }
-            survey_coll = mongo.db.get_collection(s_id)
-            survey_coll.insert_one(md)
     else:
-        flash("the file is not subitted or the date is not available for submission.") # Added 25 Aug 
-                
-    return jsonify(render_template('calendar_en.html', sid=s_id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+        flash("이미 제출한 날짜입니다.")
 
+    return jsonify(render_template('daily_calendar.html', sid=s_id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+    
+
+# 지난 설문 처리 Ver eng
+@app.route('/lastsurvey_en', methods=['POST'])
+def lastsurvey_en(): 
+    data = request.files['data'] 
+    st = data.read()
+    l = st.decode()
+    evl = eval(l)
+    mood = evl['mood']
+    s_id = evl['sid']
+    date = evl['dt']
+    member_id = members.find_one({'id': s_id})
+
+    reg_y = member_id["register_year"]
+    reg_m = member_id["register_month"]
+    reg_d = member_id["register_day"]
+    daily_list = member_id["daily_list"]
+
+    y, m, d = date.split('-')
+    y = int(y); m = int(m); d = int(d)
+    index = int(calIndexSearch(reg_m, reg_d, m, d))
+    daily_list = member_id["daily_list"]
+        
+    if daily_list[index] == 0: # 인덱스에 해당하는 값이 0 이어야만
+        members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
+        md = { "mood": mood , "date": date }
+        survey_coll = mongo.db.get_collection(s_id)
+        survey_coll.insert_one(md)
+
+        daily_list[index] = 1
+        members.update_one({'id': s_id}, { '$set': {'daily_list': daily_list}})
+        members.update_one({'id': s_id}, {'$inc': {'submit_count': 1}})
+
+    else:
+        flash("Date already submitted.")
+
+    return jsonify(render_template('daily_calendar_en.html', sid=s_id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
 
 #팝업창
 @app.route('/pop.html', methods=['GET'])
@@ -758,7 +832,7 @@ def countCIN(name, aeName, today): #모비우스 cnt 개수 가져오기
 
 def getCountDict(today): # Count number of container in Mobius Server
     dict_CIN = {}
-
+    # f = open('./log/daily_cin_count.txt', 'a+')
     for i in range(0, 1000):
         aeName = str(i)
 
@@ -769,6 +843,7 @@ def getCountDict(today): # Count number of container in Mobius Server
         
         aeName = 'S' + aeName
         cnt = countCIN('IoT_1', aeName, today)
+        
 
         if cnt == None:
             continue
@@ -792,7 +867,7 @@ def getCountDict(today): # Count number of container in Mobius Server
                     continue
     return dict_CIN
 
-def dailycheck(today): 
+def dailycheck(): 
     docs = members.find()
     for i in docs:
         member_id = members.find_one({'id': i["id"]})
@@ -812,9 +887,10 @@ if __name__ == '__main__':
     asia_seoul = datetime.datetime.fromtimestamp(time.time(), pytz.timezone('Asia/Seoul'))
     today = asia_seoul.strftime("%Y%m%d")
 
-    sched.add_job(count, 'cron', hour="00", minute="01", id="test_1") #토요일마다
+    sched.add_job(count, 'cron', hour="05", minute="01", id="test_1") #토요일마다
+    sched.add_job(dailycheck, 'cron', hour="05", minute="00", id="test_3") # 매일, 설문조사 체크
     sched.add_job(getCountDict, 'cron', hour="00", minute="05", id="test_2", args=[today]) # 매일, 사용자에 대한 데이터 수 GET
-    sched.add_job(dailycheck, 'cron', hour="05", minute="00", id="test_3", args=[today]) # 매일, 설문조사 체크
+    
     sched.start()
 
     app.run(host='0.0.0.0', port=2017)

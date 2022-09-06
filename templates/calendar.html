@@ -505,7 +505,6 @@
         해당 날짜에 데이터가 정확하게 수집되었다고 인식하고, 빨간색 표시가 초록색 표시로 바뀝니다.
     </p>
     <div align="center">
-        <!-- <button style="width: 15%;" align="center" id="submit" onclick="fileAttach()"> -->
         <button style="width: 100%;" class="btn btn-primary" id="submit" onclick="fileAttach()">
             이전 날짜 <br>파일 전송</button>
     </div>
@@ -682,6 +681,7 @@
                 }
             })
         }
+        
         function fileAttach() {
             var postdata = {
                 "dt": document.querySelector("#input_date").value,

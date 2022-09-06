@@ -1,3 +1,11 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+        alert("{{messages[-1]}}")
+    </script>
+    {% endif %}
+{% endwith %}
+
 <!DOCTYPE HTML>
 
 <html lang="kr">
@@ -99,7 +107,7 @@
 							processData: false,
 							enctype: 'multipart/form-data',
 							success: function (data) {
-								location.href="http://114.71.220.59:2017/final"
+								// location.href="http://114.71.220.59:2017/final"
 								location.href="http://192.168.0.17:2017/final"
 							}
 						})
@@ -126,7 +134,7 @@
 		}
 
 		else if (num == 1) {
-			if ((name != acc) && checking == false) {
+			if ((name != acc) && checking == false) {     
 				alert("가속도 파일을 제출해주세요")
 				return false
 			}

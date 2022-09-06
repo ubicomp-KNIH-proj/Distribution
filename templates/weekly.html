@@ -1,3 +1,11 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+        alert("{{messages[-1]}}")
+    </script>
+    {% endif %}
+{% endwith %}
+
 <!DOCTYPE html>
 <html lang="kr">
 
@@ -226,7 +234,6 @@
 			var postdata = {
 				ID, 'date': date, 'formData1': formData1, 'formData2': formData2
 			}
-			// console.log(postdata)
 			$.ajax({
 				type: 'POST',
 				url: '{{url_for("weekly")}}',
