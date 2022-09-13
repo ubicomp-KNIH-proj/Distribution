@@ -187,10 +187,11 @@ def login():
                 reg_d = member_id["register_day"]
 
                 if daily_cal == 1 :                    # 안드로이드 사용자 -> 파일 캘린더 
-                    return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                    return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
                     if daily_cal == 2:                 #아이폰 사용자 -> 데일리 캘린더
-                        return jsonify(render_template('daily_calendar.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+                        return render_template('daily_calendar.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+
   
 
         else:                                          #비밀번호가 틀리면
@@ -207,7 +208,7 @@ def login_en():
 
     if user is None:                                   # members에 없음
         flash("The account you accessed does not exist")
-        return render_template('login.html')
+        return render_template('login_en.html')
     else: #members에 있음
         member_id = members.find_one({'id': id})
         if member_id['pwd'] == pwd:                    # 비밀번호가 맞는지 확인
@@ -230,10 +231,10 @@ def login_en():
                 reg_d = member_id["register_day"]
 
                 if daily_cal == 1 :                    # 안드로이드 사용자 -> 파일 캘린더 
-                    return render_template('calendar.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                    return render_template('calendar_en.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
                     if daily_cal == 2:                 #아이폰 사용자 -> 데일리 캘린더
-                        return jsonify(render_template('daily_calendar.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
+                        return jsonify(render_template('daily_calendar_en.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
   
 
         else:                                          #비밀번호가 틀리면
@@ -257,6 +258,7 @@ def moody():
     md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
+    members.update_one({'id': s_id}, {'$set': {'daily_flag': 1}})   # 1일 설문 제출 완료 Added 13 Sep
 
     if 'filed' in request.files:
         f = request.files['filed']
@@ -293,6 +295,8 @@ def moody_en():
     md = { "mood": mood , "date": date }
     survey_coll = mongo.db.get_collection(s_id)
     survey_coll.insert_one(md)
+    members.update_one({'id': s_id}, {'$set': {'daily_flag': 1}})   # 1일 설문 제출 완료 Added 13 Sep
+
 
     if 'filed' in request.files:
         f = request.files['filed']
@@ -532,8 +536,8 @@ def ajax4():
         
 
 # 설문 캘린더_ver en
-@app.route('/ajax4', methods=['GET', 'POST'])
-def ajax4():
+@app.route('/ajax4_en', methods=['GET', 'POST'])
+def ajax4_en():
     data = request.get_json()
     s_id = list(data.values())[0]
     print(s_id)
@@ -558,7 +562,7 @@ def ajax4():
                     return jsonify(render_template('ios_daily_en.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
         elif daily_flag == 1:
             flash("You have already completed the survey. please submit tomorrow")
-            return jsonify(render_template('login.html'))
+            return jsonify(render_template('login_en.html'))
 
 # 이전 파일 처리
 @app.route('/justfile', methods=['POST'])
@@ -867,18 +871,18 @@ def getCountDict(today): # Count number of container in Mobius Server
                     continue
     return dict_CIN
 
-def dailycheck(): 
+def dailyCheck(): 
     docs = members.find()
     for i in docs:
         member_id = members.find_one({'id': i["id"]})
         if member_id != None :
             daily_flag = member_id["daily_flag"]
             if daily_flag == 0:
-                members.update_one({'id': i["id"]}, {'$push': {'daily_list':0}})
+                members.update_one({'id': i["id"]}, {'$push': { 'daily_list': 0 }})
             else:
                 if daily_flag == 1:
-                    members.update_one({'id': i["id"]}, {'$push': {'daily_list':1}})
-                    members.update_one({'id':i["id"]}, {'$set':{'daily_flag':0}})
+                    members.update_one({'id': i["id"]}, {'$push': { 'daily_list': 1 }})
+                    members.update_one({'id':i["id"]}, {'$set':{ 'daily_flag': 0 }})
                     
     
 if __name__ == '__main__':
@@ -888,7 +892,7 @@ if __name__ == '__main__':
     today = asia_seoul.strftime("%Y%m%d")
 
     sched.add_job(count, 'cron', hour="05", minute="01", id="test_1") #토요일마다
-    sched.add_job(dailycheck, 'cron', hour="05", minute="00", id="test_3") # 매일, 설문조사 체크
+    sched.add_job(dailyCheck, 'cron', hour="15", minute="03", id="test_3") # 매일, 설문조사 체크
     sched.add_job(getCountDict, 'cron', hour="00", minute="05", id="test_2", args=[today]) # 매일, 사용자에 대한 데이터 수 GET
     
     sched.start()
