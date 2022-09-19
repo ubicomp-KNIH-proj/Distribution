@@ -467,6 +467,7 @@
                 <img id="oct1" src="../static/oct.png" style="width:80px" onclick="octoberCalendar()">
                 <img id="oct2" src="../static/oct_b.png" style="width:80px" onclick="octoberCalendar()">
             </label></td>
+        <br>
         <td><label>
                 <img id="nov1" src="../static/nov.png" style="width:80px" onclick="novemberCalendar()">
                 <img id="nov2" src="../static/nov_b.png" style="width:80px" onclick="novemberCalendar()">
@@ -522,7 +523,7 @@
             '010-2490-5530'.
     </p>
     <button onclick="toDaily()" id="submit_btn" class="btn btn-primary" style="width: 100%;"
-        data-target="#result">Confirm</button>
+        data-target="#result">Go to View Survey Status</button>
 
     <script>
         $(document).ready(function () {
@@ -670,7 +671,7 @@
             }
             $.ajax({
                 type: 'POST',
-                url: '{{url_for("ajax3")}}',
+                url: '{{url_for("ajax3_en")}}',
                 data: JSON.stringify(postdata),
                 dataType: 'JSON',
                 contentType: "application/json",
@@ -694,7 +695,7 @@
             formData.append('filed', document.getElementById("f").files[0]);
             $.ajax({
                 type: 'POST',
-                url: '{{url_for("justfile")}}',
+                url: '{{url_for("justfile_en")}}',
                 data: formData,
                 multiple: true,
                 contentType: false,
