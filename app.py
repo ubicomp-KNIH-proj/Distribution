@@ -192,8 +192,6 @@ def login():
                     if daily_cal == 2:                 #아이폰 사용자 -> 데일리 캘린더
                         return render_template('daily_calendar.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
 
-  
-
         else:                                          #비밀번호가 틀리면
             flash('비밀번호가 일치하지 않습니다.')
             return render_template('login.html')
@@ -231,14 +229,13 @@ def login_en():
                 reg_d = member_id["register_day"]
 
                 if daily_cal == 1 :                    # 안드로이드 사용자 -> 파일 캘린더 
-                    return render_template('calendar_en.html', sid=id, cin=cin_count, cal=cal_list, dai = daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
+                    return render_template('calendar_en.html', sid=id, cin=cin_count, cal=cal_list, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
                 else:
                     if daily_cal == 2:                 #아이폰 사용자 -> 데일리 캘린더
-                        return jsonify(render_template('daily_calendar_en.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
-  
+                        return render_template('daily_calendar_en.html', sid=id, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d)
 
         else:                                          #비밀번호가 틀리면
-            flash('The password you entered does not match.')
+            flash('비밀번호가 일치하지 않습니다.')
             return render_template('login.html')
 
 
@@ -405,18 +402,15 @@ def weekly():
     wcount = member_id['weekly_count']
     daily_flag = member_id['daily_flag']
 
-    if wcount > 0:
-        return jsonify(render_template('weekly.html', sid=s_id, cnt=count, fcnt=fcount, wcnt=wcount))
-    else:
-        if daily_flag == 0:
-            if member_id['daily'] == 1:
-                return jsonify(render_template('android_daily.html', sid=s_id, cnt=count, fcnt=fcount))
-            else:
-                if member_id['daily'] == 2:
-                    return jsonify(render_template('ios_daily.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
-        elif daily_flag == 1:
-            flash("이미 설문을 완료하셨습니다. 내일 설문해주세요")
-            return jsonify(render_template('login.html'))
+    if daily_flag == 0:
+        if member_id['daily'] == 1:
+            return jsonify(render_template('android_daily.html', sid=s_id, cnt=count, fcnt=fcount))
+        else:
+            if member_id['daily'] == 2:
+                return jsonify(render_template('ios_daily.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
+    elif daily_flag == 1:
+        flash("이미 설문을 완료하셨습니다. 내일 설문해주세요")
+        return jsonify(render_template('login.html'))
 
 # 주간 설문_영어
 @app.route('/weekly_en', methods=['GET', 'POST'])
@@ -438,18 +432,15 @@ def weekly_en():
     wcount = member_id['weekly_count']
     daily_flag = member_id['daily_flag']
 
-    if wcount > 0:
-        return jsonify(render_template('weekly_en.html', sid=s_id, cnt=count, fcnt=fcount, wcnt=wcount))
-    else:
-        if daily_flag == 0:
-            if member_id['daily'] == 1:
-                return jsonify(render_template('android_daily_en.html', sid=s_id, cnt=count, fcnt=fcount))
-            else:
-                if member_id['daily'] == 2:
-                    return jsonify(render_template('ios_daily_en.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
-        elif daily_flag == 1:
-            flash("You have already completed the survey. please submit tomorrow")
-            return jsonify(render_template('login_en.html'))
+    if daily_flag == 0:
+        if member_id['daily'] == 1:
+            return jsonify(render_template('android_daily_en.html', sid=s_id, cnt=count, fcnt=fcount))
+        else:
+            if member_id['daily'] == 2:
+                return jsonify(render_template('ios_daily_en.html', sid=s_id, cnt=count, hcnt=hcount, gcnt=gcount, acnt=acount))
+    elif daily_flag == 1:
+        flash("You have already completed the survey. please submit tomorrow")
+        return jsonify(render_template('login_en.html'))
 
 # 파일 캘린더 처리 - 갤럭시 사용자
 @app.route('/ajax3', methods=['GET', 'POST'])
@@ -469,14 +460,11 @@ def ajax3():
     reg_m = member_id["register_month"]
     reg_d = member_id["register_day"]
 
-    if member_id['weekly_count'] > 0:
-        return jsonify(render_template('weekly.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+    if member_id['daily'] == 1:
+        return jsonify(render_template('daily_calendar.html', sid=x_survey, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
     else:
-        if member_id['daily'] == 1:
-            return jsonify(render_template('daily_calendar.html', sid=x_survey, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
-        else:
-            if member_id['daily'] == 2:
-                return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        if member_id['daily'] == 2:
+            return jsonify(render_template('ios_daily.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
 
 #파일 캘린더_갤럭시 사용자_영어
 @app.route('/ajax3_en', methods=['GET', 'POST'])
@@ -496,14 +484,11 @@ def ajax3_en():
     reg_m = member_id["register_month"]
     reg_d = member_id["register_day"]
 
-    if member_id['weekly_count'] > 0:
-        return jsonify(render_template('weekly_en.html', sid=x_survey, cnt=count, fcnt=fcount, wcnt=wcount))
+    if member_id['daily'] == 1:
+        return jsonify(render_template('daily_calendar_en.html', sid=x_survey, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
     else:
-        if member_id['daily'] == 1:
-            return jsonify(render_template('daily_calendar_en.html', sid=x_survey, dai=daily_list, reg_y=reg_y, reg_m=reg_m, reg_d=reg_d))
-        else:
-            if member_id['daily'] == 2:
-                return jsonify(render_template('ios_daily_en.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
+        if member_id['daily'] == 2:
+            return jsonify(render_template('ios_daily_en.html', sid=x_survey, cnt=count, wcnt=wcount, hcnt=hcount, gcnt=gcount, acnt=acount))
 
 # 설문 캘린더
 @app.route('/ajax4', methods=['GET', 'POST'])
@@ -891,9 +876,9 @@ if __name__ == '__main__':
     asia_seoul = datetime.datetime.fromtimestamp(time.time(), pytz.timezone('Asia/Seoul'))
     today = asia_seoul.strftime("%Y%m%d")
 
-    sched.add_job(count, 'cron', hour="05", minute="01", id="test_1") #토요일마다
-    sched.add_job(dailyCheck, 'cron', hour="15", minute="03", id="test_3") # 매일, 설문조사 체크
-    sched.add_job(getCountDict, 'cron', hour="00", minute="05", id="test_2", args=[today]) # 매일, 사용자에 대한 데이터 수 GET
+    sched.add_job(count, 'cron', hour="05", minute="01", id="test_1") # 토요일 주간 설문 확인
+    sched.add_job(dailyCheck, 'cron', hour="05", minute="30", id="test_3") # 매일 설문조사 했는지 체크
+    sched.add_job(getCountDict, 'cron', hour="00", minute="05", id="test_2", args=[today]) # 매일 사용자에 대한 데이터 수 GET
     
     sched.start()
 
