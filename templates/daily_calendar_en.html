@@ -473,6 +473,7 @@
                 <img id="oct1" src="../static/oct.png" style="width:80px" onclick="octoberCalendar()">
                 <img id="oct2" src="../static/oct_b.png" style="width:80px" onclick="octoberCalendar()">
             </label></td>
+        <br>
         <td><label>
                 <img id="nov1" src="../static/nov.png" style="width:80px" onclick="novemberCalendar()">
                 <img id="nov2" src="../static/nov_b.png" style="width:80px" onclick="novemberCalendar()">
@@ -487,45 +488,46 @@
     <table id="calendar" border="3" align="center" style="border-color:#3333FF ">
         <tr>
             <td align="center" id="tbCalendarYM" colspan="10">
-                yyyyY mM</td>
+                yyyyyear m</td>
         </tr>
         <tr>
             <td align="center">
-                <font color="#F79DC2">SUN
+                <font color="#F79DC2">Sun
             </td>
-            <td align="center">MON</td>
-            <td align="center">TUE</td>
-            <td align="center">WED</td>
-            <td align="center">THU</td>
-            <td align="center">FRI</td>
+            <td align="center">Mon</td>
+            <td align="center">Tue</td>
+            <td align="center">Wed</td>
+            <td align="center">Thu </td>
+            <td align="center">Fri</td>
             <td align="center">
                 <font color="skyblue">Sat
             </td>
-        </tr>
+        <!-- </tr> -->
     </table>
-    Date: <input type="date" id="input_date" name="adate"><br>
-    Survey: <input type="file" id="f" name="filed" multiple="multiple">
+    Date marked in red: <input type="date" id="input_date" name="adate"><br>
+
+    <!-- Date: <input type="date" id="input_date" name="adate"><br> -->
     <br>
     <p id="etc" styple="text-align: center">
-        Please include the date marked in red in the "Date" and the "tar file" in the "File", not the text file that matches the date.<br><br>
-        We recognize that the data were collected accurately on the corresponding date, and the red mark changes to the green mark.
+        For Date, please select the date <br> marked in red and press <br>the "Go to Last Survey" button.<br><br>
+        If you complete the survey on that date, <br> the red mark changes to the green mark.
     </p>
     <div align="center">
         <!-- <button style="width: 15%;" align="center" id="submit" onclick="fileAttach()"> -->
         <button style="width: 100%;" class="btn btn-primary" id="submit" onclick="fileAttach()">
-            Previous Date <br>File Attach</button>
+            "Select the date and click"<br> Go to Last Survey</button>
     </div>
     <p id="etc" style="text-align: center">
         <img id="jul1" src="../static/sred.png" style="width:300px"><br>
         <img id="jul1" src="../static/sgreen.png" style="width:300px"><br>
-        If you complete the survey on that date, it will be green,<br> otherwise it will be red.
+        If you completed the survey on that date, <br> it will be displayed in green and <br>if you did not, in red.
         <br>
         <==============================><br>
             For inquiries, please contact <br>the 'smartphone/smartwatch activity data collection' open chat room <br>or
             '010-2490-5530'.
     </p>
     <button onclick="toDaily()" id="submit_btn" class="btn btn-primary" style="width: 100%;"
-        data-target="#result">Confirm</button>
+        data-target="#result">Start the Today's Survey</button>
 
     <script>
         $(document).ready(function () {
@@ -673,7 +675,7 @@
             }
             $.ajax({
                 type: 'POST',
-                url: '{{url_for("ajax4")}}',
+                url: '{{url_for("ajax4_en")}}',
                 data: JSON.stringify(postdata),
                 dataType: 'JSON',
                 contentType: "application/json",
@@ -692,19 +694,18 @@
                 "sid": ID
             }
             var formData = new FormData();
-            document.getElementById("submit").innerHTML = "submitting";
+            document.getElementById("submit").innerHTML = "제출중....";
             formData.append('data', new Blob([JSON.stringify(postdata)], { type: "application/json" }));
-            formData.append('filed', document.getElementById("f").files[0]);
             $.ajax({
                 type: 'POST',
-                url: '{{url_for("justfile")}}',
+                url: '{{url_for("presurvey_en")}}',
                 data: formData,
                 multiple: true,
                 contentType: false,
                 processData: false,
                 enctype: 'multipart/form-data',
                 success: function (response) {
-                    document.getElementById("submit").innerHTML = "Submitted";
+                    document.getElementById("submit").innerHTML = "submit";
                     $('body').html(response);
                 },
                 error: function (request, status, error) {
