@@ -473,6 +473,7 @@
                 <img id="oct1" src="../static/oct.png" style="width:80px" onclick="octoberCalendar()">
                 <img id="oct2" src="../static/oct_b.png" style="width:80px" onclick="octoberCalendar()">
             </label></td>
+        <br>
         <td><label>
                 <img id="nov1" src="../static/nov.png" style="width:80px" onclick="novemberCalendar()">
                 <img id="nov2" src="../static/nov_b.png" style="width:80px" onclick="novemberCalendar()">
@@ -499,22 +500,22 @@
             <td align="center">목</td>
             <td align="center">금</td>
             <td align="center">
-                <!-- <font color="skyblue">토 -->
+                <font color="skyblue">토
             </td>
         <!-- </tr> -->
     </table>
-    Date: <input type="date" id="input_date" name="adate"><br>
+    빨간색으로 표시된 날짜: <input type="date" id="input_date" name="adate"><br>
 
     <!-- Date: <input type="date" id="input_date" name="adate"><br> -->
     <br>
     <p id="etc" styple="text-align: center">
-        Date에는 빨간색으로 표시된 날짜를 선택해주시고  버튼을 눌러주세요.<br><br>
-        해당 날짜에 설문을 진행했다 인식하고, 빨간색 표시가 초록색 표시로 바뀝니다.
+        Date에는 빨간색으로 표시된 날짜를 선택해주시고 <br>"지난 설문 하러 가기" 버튼을 눌러주세요.<br><br>
+        해당 날짜에 설문을 진행했다 인식하고, <br>빨간색 표시가 초록색 표시로 바뀝니다.
     </p>
     <div align="center">
         <!-- <button style="width: 15%;" align="center" id="submit" onclick="fileAttach()"> -->
         <button style="width: 100%;" class="btn btn-primary" id="submit" onclick="fileAttach()">
-            지난 설문 <br> 하러 가기</button>
+            "반드시 날짜 선택 후 클릭" <br> 지난 설문하러 가기</button>
     </div>
     <p id="etc" style="text-align: center">
         <img id="jul1" src="../static/sred.png" style="width:300px"><br>
@@ -526,7 +527,7 @@
             '010-2490-5530'으로 연락주세요.
     </p>
     <button onclick="toDaily()" id="submit_btn" class="btn btn-primary" style="width: 100%;"
-        data-target="#result">확인</button>
+        data-target="#result">오늘 설문하러 가기</button>
 
     <script>
         $(document).ready(function () {
