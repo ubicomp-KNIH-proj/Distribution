@@ -692,6 +692,7 @@ def presurvey_en():
 # 지난 설문 처리
 @app.route('/lastsurvey', methods=['POST'])
 def lastsurvey(): 
+    now = datetime.datetime.now()
     data = request.files['data'] 
     st = data.read()
     l = st.decode()
@@ -713,7 +714,7 @@ def lastsurvey():
         
     if daily_list[index] == 0: # 인덱스에 해당하는 값이 0 이어야만
         members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
-        md = { "mood": mood , "date": date }
+        md = { "mood": mood , "date": date, 'now': now}
         survey_coll = mongo.db.get_collection(s_id)
         survey_coll.insert_one(md)
 
@@ -730,6 +731,7 @@ def lastsurvey():
 # 지난 설문 처리 Ver eng
 @app.route('/lastsurvey_en', methods=['POST'])
 def lastsurvey_en(): 
+    now = datetime.datetime.now()
     data = request.files['data'] 
     st = data.read()
     l = st.decode()
@@ -751,7 +753,7 @@ def lastsurvey_en():
         
     if daily_list[index] == 0: # 인덱스에 해당하는 값이 0 이어야만
         members.update_one({'id': s_id}, {'$inc': {'attach_count': 1}})
-        md = { "mood": mood , "date": date }
+        md = { "mood": mood , "date": date, 'now': now}
         survey_coll = mongo.db.get_collection(s_id)
         survey_coll.insert_one(md)
 
@@ -821,21 +823,16 @@ def countCIN(name, aeName, today): #모비우스 cnt 개수 가져오기
 
 def getCountDict(today): # Count number of container in Mobius Server
     dict_CIN = {}
-    # f = open('./log/daily_cin_count.txt', 'a+')
-    for i in range(0, 1000):
+    for i in range(600, 700):
         aeName = str(i)
 
-        if len(aeName) == 1:
-            aeName = '00' + aeName
-        elif len(aeName) == 2:
-            aeName = '0' + aeName
-        
         aeName = 'S' + aeName
-        cnt = countCIN('IoT_1', aeName, today)
-        
+        cnt = countCIN('IoT_1', aeName, today)   
 
+    if member_id != None :
         if cnt == None:
-            continue
+            members.update_one({'id': k}, {'$push': {'cal_list':0}})
+            # continue
         else:
             dict_CIN[aeName] = cnt
             
@@ -846,12 +843,12 @@ def getCountDict(today): # Count number of container in Mobius Server
         members.update_one({'id':k}, {'$set':{'CIN_count':v}})
         if member_id != None :
             cin_count = member_id["CIN_count"]
-            print(cin_count)
-            if cin_count < 143:
+            print(f'{k} is {cin_count}')
+            if cin_count < 975:
                 members.update_one({'id': k}, {'$push': {'cal_list':0}})
                 continue
             else:
-                if cin_count >= 143:
+                if cin_count >= 975:
                     members.update_one({'id': k}, {'$push': {'cal_list':1}})
                     continue
     return dict_CIN
@@ -877,7 +874,7 @@ if __name__ == '__main__':
     today = asia_seoul.strftime("%Y%m%d")
 
     sched.add_job(count, 'cron', hour="05", minute="01", id="test_1") # 토요일 주간 설문 확인
-    sched.add_job(dailyCheck, 'cron', hour="05", minute="30", id="test_3") # 매일 설문조사 했는지 체크
+    sched.add_job(dailyCheck, 'cron', hour="05", minute="5", id="test_3") # 매일 설문조사 했는지 체크
     sched.add_job(getCountDict, 'cron', hour="00", minute="05", id="test_2", args=[today]) # 매일 사용자에 대한 데이터 수 GET
     
     sched.start()
