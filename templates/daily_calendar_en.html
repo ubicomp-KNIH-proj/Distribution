@@ -689,31 +689,43 @@
             })
         }
         function fileAttach() {
-            var postdata = {
-                "dt": document.querySelector("#input_date").value,
-                "sid": ID
-            }
-            var formData = new FormData();
-            document.getElementById("submit").innerHTML = "제출중....";
-            formData.append('data', new Blob([JSON.stringify(postdata)], { type: "application/json" }));
-            $.ajax({
-                type: 'POST',
-                url: '{{url_for("presurvey_en")}}',
-                data: formData,
-                multiple: true,
-                contentType: false,
-                processData: false,
-                enctype: 'multipart/form-data',
-                success: function (response) {
-                    document.getElementById("submit").innerHTML = "submit";
-                    $('body').html(response);
-                },
-                error: function (request, status, error) {
-                    alert('ajax 통신 실패')
-                    alert(error);
+                var postdata = {
+                    "dt": document.querySelector("#input_date").value,
+                    "sid": ID
                 }
-            })
-        }
+                
+                var today_date = new Date().getTime() / 1000;             // 제출하는 날짜
+                var survey_date = new Date(postdata.dt).getTime() / 1000; // 제출하려고 하는 날짜
+                today_date = Math.ceil(today_date)                        // 반올림
+                survey_date = Math.ceil(survey_date)                      // 반올림
+                survey_date = survey_date - 14399;
+                var formData = new FormData();
+
+                if (today_date - survey_date < 345600) {                  // 제한 4일
+                    document.getElementById("submit").innerHTML = "Submitting....";
+                    formData.append('data', new Blob([JSON.stringify(postdata)], { type: "application/json" }));
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{url_for("presurvey_en")}}',
+                        data: formData,
+                        multiple: true,
+                        contentType: false,
+                        processData: false,
+                        enctype: 'multipart/form-data',
+                        success: function (response) {
+                            document.getElementById("submit").innerHTML = "complete";
+                            $('body').html(response);
+                        },
+                        error: function (request, status, error) {
+                            alert('Fail ajax comunication')
+                            alert(error);
+                        }
+                    })
+                }
+                else {
+                    alert("This date is no longer available for surveys")
+                }
+            }
 
     </script>
 </body>
