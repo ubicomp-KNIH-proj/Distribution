@@ -1,9 +1,9 @@
 {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <script>
-        alert("{{messages[-1]}}")
-    </script>
-    {% endif %}
+{% if messages %}
+<script>
+    alert("{{messages[-1]}}")
+</script>
+{% endif %}
 {% endwith %}
 
 <!DOCTYPE html>
@@ -28,6 +28,7 @@
             border-color: #3333FF;
             border-radius: 8px;
         }
+
         body {
             background-color: #c5e8f2;
             font-family: Verdana;
@@ -239,7 +240,7 @@
 
                 } else if (reg_m == 9) {
                     var index = (30 - reg_d) + 1 //30
-                    sum = Number(cal_l.length) + Number(reg_d) - 30 
+                    sum = Number(cal_l.length) + Number(reg_d) - 30
                     for (k = 1; k < sum; k++) {
                         if (today.getFullYear() == date.getFullYear() && i == k) {
                             if (cal_l[i + index - 1] == 0) {
@@ -448,7 +449,7 @@
                         }
                     }
                 }
-                
+
 
             }
         }
@@ -459,263 +460,275 @@
     <h3 align="center" style="font-size: 30px;">{{sid}}</h3>
     <h4 align="center" style="font-size: 30px;">설문 완료 체크</h3>
 
-    <hr>
-    <tr>
-        <td><label>
-                <img id="aug1" src="../static/aug.png" style="width:80px" onclick="augustCalendar()">
-                <img id="aug2" src="../static/aug_b.png" style="width:80px" onclick="augustCalendar()">
-            </label></td>
-        <td><label>
-                <img id="sep1" src="../static/sep.png" style="width:80px" onclick="septemCalendar()">
-                <img id="sep2" src="../static/sep_b.png" style="width:80px" onclick="septemCalendar()">
-            </label></td>
-        <td><label>
-                <img id="oct1" src="../static/oct.png" style="width:80px" onclick="octoberCalendar()">
-                <img id="oct2" src="../static/oct_b.png" style="width:80px" onclick="octoberCalendar()">
-            </label></td>
-        <br>
-        <td><label>
-                <img id="nov1" src="../static/nov.png" style="width:80px" onclick="novemberCalendar()">
-                <img id="nov2" src="../static/nov_b.png" style="width:80px" onclick="novemberCalendar()">
-            </label></td>
-        <td><label>
-                <img id="dec1" src="../static/dec.png" style="width:80px" onclick="decemberCalendar()">
-                <img id="dec2" src="../static/dec_b.png" style="width:80px" onclick="decemberCalendar()">
-            </label></td>
-
-    </tr>
-    <hr>
-    <table id="calendar" border="3" align="center" style="border-color:#3333FF ">
+        <hr>
         <tr>
-            <td align="center" id="tbCalendarYM" colspan="10">
-                yyyy년 m월</td>
+            <td><label>
+                    <img id="aug1" src="../static/aug.png" style="width:80px" onclick="augustCalendar()">
+                    <img id="aug2" src="../static/aug_b.png" style="width:80px" onclick="augustCalendar()">
+                </label></td>
+            <td><label>
+                    <img id="sep1" src="../static/sep.png" style="width:80px" onclick="septemCalendar()">
+                    <img id="sep2" src="../static/sep_b.png" style="width:80px" onclick="septemCalendar()">
+                </label></td>
+            <td><label>
+                    <img id="oct1" src="../static/oct.png" style="width:80px" onclick="octoberCalendar()">
+                    <img id="oct2" src="../static/oct_b.png" style="width:80px" onclick="octoberCalendar()">
+                </label></td>
+            <br>
+            <td><label>
+                    <img id="nov1" src="../static/nov.png" style="width:80px" onclick="novemberCalendar()">
+                    <img id="nov2" src="../static/nov_b.png" style="width:80px" onclick="novemberCalendar()">
+                </label></td>
+            <td><label>
+                    <img id="dec1" src="../static/dec.png" style="width:80px" onclick="decemberCalendar()">
+                    <img id="dec2" src="../static/dec_b.png" style="width:80px" onclick="decemberCalendar()">
+                </label></td>
+
         </tr>
-        <tr>
-            <td align="center">
-                <font color="#F79DC2">일
-            </td>
-            <td align="center">월</td>
-            <td align="center">화</td>
-            <td align="center">수</td>
-            <td align="center">목</td>
-            <td align="center">금</td>
-            <td align="center">
-                <font color="skyblue">토
-            </td>
-        <!-- </tr> -->
-    </table>
-    빨간색으로 표시된 날짜: <input type="date" id="input_date" name="adate"><br>
+        <hr>
+        <table id="calendar" border="3" align="center" style="border-color:#3333FF ">
+            <tr>
+                <td align="center" id="tbCalendarYM" colspan="10">
+                    yyyy년 m월</td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <font color="#F79DC2">일
+                </td>
+                <td align="center">월</td>
+                <td align="center">화</td>
+                <td align="center">수</td>
+                <td align="center">목</td>
+                <td align="center">금</td>
+                <td align="center">
+                    <font color="skyblue">토
+                </td>
+                <!-- </tr> -->
+        </table>
+        빨간색으로 표시된 날짜: <input type="date" id="input_date" name="adate"><br>
 
-    <!-- Date: <input type="date" id="input_date" name="adate"><br> -->
-    <br>
-    <p id="etc" styple="text-align: center">
-        Date에는 빨간색으로 표시된 날짜를 선택해주시고 <br>"지난 설문 하러 가기" 버튼을 눌러주세요.<br><br>
-        해당 날짜에 설문을 진행했다 인식하고, <br>빨간색 표시가 초록색 표시로 바뀝니다.
-    </p>
-    <div align="center">
-        <!-- <button style="width: 15%;" align="center" id="submit" onclick="fileAttach()"> -->
-        <button style="width: 100%;" class="btn btn-primary" id="submit" onclick="fileAttach()">
-            "반드시 날짜 선택 후 클릭" <br> 지난 설문하러 가기</button>
-    </div>
-    <p id="etc" style="text-align: center">
-        <img id="jul1" src="../static/sred.png" style="width:300px"><br>
-        <img id="jul1" src="../static/sgreen.png" style="width:300px"><br>
-        해당 날짜에 설문조사를 완료한 경우 초록색으로,<br> 완료하지 않은 경우 빨간색으로 표시됩니다.
+        <!-- Date: <input type="date" id="input_date" name="adate"><br> -->
         <br>
-        <==============================><br>
-            문의사항은 <br>'스마트폰/스마트워치 활동 데이터 수집' 오픈채팅방 <br>또는
-            '010-2490-5530'으로 연락주세요.
-    </p>
-    <button onclick="toDaily()" id="submit_btn" class="btn btn-primary" style="width: 100%;"
-        data-target="#result">오늘 설문하러 가기</button>
+        <p id="etc" styple="text-align: center">
+            Date에는 빨간색으로 표시된 날짜를 선택해주시고 <br>"지난 설문 하러 가기" 버튼을 눌러주세요.<br><br>
+            해당 날짜에 설문을 진행했다 인식하고, <br>빨간색 표시가 초록색 표시로 바뀝니다.
+        </p>
+        <div align="center">
+            <!-- <button style="width: 15%;" align="center" id="submit" onclick="fileAttach()"> -->
+            <button style="width: 100%;" class="btn btn-primary" id="submit" onclick="fileAttach()">
+                "반드시 날짜 선택 후 클릭" <br> 지난 설문하러 가기</button>
+        </div>
+        <p id="etc" style="text-align: center">
+            <img id="jul1" src="../static/sred.png" style="width:300px"><br>
+            <img id="jul1" src="../static/sgreen.png" style="width:300px"><br>
+            해당 날짜에 설문조사를 완료한 경우 초록색으로,<br> 완료하지 않은 경우 빨간색으로 표시됩니다.
+            <br>
+            <==============================><br>
+                문의사항은 <br>'스마트폰/스마트워치 활동 데이터 수집' 오픈채팅방 <br>또는
+                '010-2490-5530'으로 연락주세요.
+        </p>
+        <button onclick="toDaily()" id="submit_btn" class="btn btn-primary" style="width: 100%;"
+            data-target="#result">오늘 설문하러 가기</button>
 
-    <script>
-        $(document).ready(function () {
+        <script>
+            $(document).ready(function () {
+                var today = new Date();
+                if ((today.getMonth() + 1) == 8) {
+                    $("#aug1").show()
+                    $("#aug2").hide()
+                    $("#sep1").hide()
+                    $("#sep2").show()
+                    $("#oct1").hide()
+                    $("#oct2").show()
+                    $("#nov1").hide()
+                    $("#nov2").show()
+                    $("#dec1").hide()
+                    $("#dec2").show()
+                } else if ((today.getMonth() + 1) == 9) {
+                    $("#sep1").show()
+                    $("#sep2").hide()
+                    $("#aug1").hide()
+                    $("#aug2").show()
+                    $("#oct1").hide()
+                    $("#oct2").show()
+                    $("#nov1").hide()
+                    $("#nov2").show()
+                    $("#dec1").hide()
+                    $("#dec2").show()
+                } else if ((today.getMonth() + 1) == 10) {
+                    $("#oct1").show()
+                    $("#oct2").hide()
+                    $("#aug1").hide()
+                    $("#aug2").show()
+                    $("#sep1").hide()
+                    $("#sep2").show()
+                    $("#nov1").hide()
+                    $("#nov2").show()
+                    $("#dec1").hide()
+                    $("#dec2").show()
+                } else if ((today.getMonth() + 1) == 11) {
+                    $("#nov1").show()
+                    $("#nov2").hide()
+                    $("#aug1").hide()
+                    $("#aug2").show()
+                    $("#sep1").hide()
+                    $("#sep2").show()
+                    $("#oct1").hide()
+                    $("#oct2").show()
+                    $("#dec1").hide()
+                    $("#dec2").show()
+                } else if ((today.getMonth() + 1) == 12) {
+                    $("#dec1").show()
+                    $("#dec2").hide()
+                    $("#aug1").hide()
+                    $("#aug2").show()
+                    $("#sep1").hide()
+                    $("#sep2").show()
+                    $("#oct1").hide()
+                    $("#oct2").show()
+                    $("#nov1").hide()
+                    $("#nov2").show()
+                }
+                $("#aug2").click(function () {
+                    $("#aug2").hide();
+                    $("#aug1").show();
+                    $("#sep1").hide();
+                    $("#sep2").show();
+                    $("#oct1").hide();
+                    $("#oct2").show();
+                    $("#nov1").hide();
+                    $("#nov2").show();
+                    $("#dec1").hide();
+                    $("#dec2").show();
+                });
+                $("#sep2").click(function () {
+                    $("#sep2").hide();
+                    $("#sep1").show();
+                    $("#aug1").hide();
+                    $("#aug2").show();
+                    $("#oct1").hide();
+                    $("#oct2").show();
+                    $("#nov1").hide();
+                    $("#nov2").show();
+                    $("#dec1").hide();
+                    $("#dec2").show();
+                });
+                $("#oct2").click(function () {
+                    $("#oct2").hide();
+                    $("#oct1").show();
+                    $("#aug1").hide();
+                    $("#aug2").show();
+                    $("#sep1").hide();
+                    $("#sep2").show();
+                    $("#nov1").hide();
+                    $("#nov2").show();
+                    $("#dec1").hide();
+                    $("#dec2").show();
+                });
+                $("#nov2").click(function () {
+                    $("#nov2").hide();
+                    $("#nov1").show();
+                    $("#aug1").hide();
+                    $("#aug2").show();
+                    $("#sep1").hide();
+                    $("#sep2").show();
+                    $("#oct1").hide();
+                    $("#oct2").show();
+                    $("#dec1").hide();
+                    $("#dec2").show();
+                });
+                $("#dec2").click(function () {
+                    $("#dec2").hide();
+                    $("#dec1").show();
+                    $("#aug1").hide();
+                    $("#aug2").show();
+                    $("#sep1").hide();
+                    $("#sep2").show();
+                    $("#oct1").hide();
+                    $("#oct2").show();
+                    $("#nov1").hide();
+                    $("#nov2").show();
+                });
+            })
+
+            let cal = '{{dai}}'
+            let reg_y = '{{reg_y}}'
+            let reg_m = '{{reg_m}}'
+            let reg_d = '{{reg_d}}'
+            cal_l = JSON.parse(cal)
+
             var today = new Date();
-        if ((today.getMonth() + 1) == 8) {
-                $("#aug1").show()
-                $("#aug2").hide()
-                $("#sep1").hide()
-                $("#sep2").show()
-                $("#oct1").hide()
-                $("#oct2").show()
-                $("#nov1").hide()
-                $("#nov2").show()
-                $("#dec1").hide()
-                $("#dec2").show()
+            if ((today.getMonth() + 1) == 8) {
+                augustCalendar();
             } else if ((today.getMonth() + 1) == 9) {
-                $("#sep1").show()
-                $("#sep2").hide()
-                $("#aug1").hide()
-                $("#aug2").show()
-                $("#oct1").hide()
-                $("#oct2").show()
-                $("#nov1").hide()
-                $("#nov2").show()
-                $("#dec1").hide()
-                $("#dec2").show()
+                septemCalendar();
             } else if ((today.getMonth() + 1) == 10) {
-                $("#oct1").show()
-                $("#oct2").hide()
-                $("#aug1").hide()
-                $("#aug2").show()
-                $("#sep1").hide()
-                $("#sep2").show()
-                $("#nov1").hide()
-                $("#nov2").show()
-                $("#dec1").hide()
-                $("#dec2").show()
+                octoberCalendar();
             } else if ((today.getMonth() + 1) == 11) {
-                $("#nov1").show()
-                $("#nov2").hide()
-                $("#aug1").hide()
-                $("#aug2").show()
-                $("#sep1").hide()
-                $("#sep2").show()
-                $("#oct1").hide()
-                $("#oct2").show()
-                $("#dec1").hide()
-                $("#dec2").show()
+                novemberCalendar();
             } else if ((today.getMonth() + 1) == 12) {
-                $("#dec1").show()
-                $("#dec2").hide()
-                $("#aug1").hide()
-                $("#aug2").show()
-                $("#sep1").hide()
-                $("#sep2").show()
-                $("#oct1").hide()
-                $("#oct2").show()
-                $("#nov1").hide()
-                $("#nov2").show()
-            } 
-            $("#aug2").click(function () {
-                $("#aug2").hide();
-                $("#aug1").show();
-                $("#sep1").hide();
-                $("#sep2").show();
-                $("#oct1").hide();
-                $("#oct2").show();
-                $("#nov1").hide();
-                $("#nov2").show();
-                $("#dec1").hide();
-                $("#dec2").show();
-            });
-            $("#sep2").click(function () {
-                $("#sep2").hide();
-                $("#sep1").show();
-                $("#aug1").hide();
-                $("#aug2").show();
-                $("#oct1").hide();
-                $("#oct2").show();
-                $("#nov1").hide();
-                $("#nov2").show();
-                $("#dec1").hide();
-                $("#dec2").show();
-            });
-            $("#oct2").click(function () {
-                $("#oct2").hide();
-                $("#oct1").show();
-                $("#aug1").hide();
-                $("#aug2").show();
-                $("#sep1").hide();
-                $("#sep2").show();
-                $("#nov1").hide();
-                $("#nov2").show();
-                $("#dec1").hide();
-                $("#dec2").show();
-            });
-            $("#nov2").click(function () {
-                $("#nov2").hide();
-                $("#nov1").show();
-                $("#aug1").hide();
-                $("#aug2").show();
-                $("#sep1").hide();
-                $("#sep2").show();
-                $("#oct1").hide();
-                $("#oct2").show();
-                $("#dec1").hide();
-                $("#dec2").show();
-            });
-            $("#dec2").click(function () {
-                $("#dec2").hide();
-                $("#dec1").show();
-                $("#aug1").hide();
-                $("#aug2").show();
-                $("#sep1").hide();
-                $("#sep2").show();
-                $("#oct1").hide();
-                $("#oct2").show();
-                $("#nov1").hide();
-                $("#nov2").show();
-            });
-        })
-
-        let cal = '{{dai}}'
-        let reg_y = '{{reg_y}}'
-        let reg_m = '{{reg_m}}'
-        let reg_d = '{{reg_d}}'
-        cal_l = JSON.parse(cal)
-
-         var today = new Date();
-        if ((today.getMonth()+1) == 8) {
-             augustCalendar();
-         } else if ((today.getMonth()+1) == 9) {
-             septemCalendar();
-         } else if ((today.getMonth()+1) == 10) {
-             octoberCalendar();
-         } else if ((today.getMonth()+1) == 11) {
-             novemberCalendar();
-         } else if ((today.getMonth()+1) == 12) {
-             decemberCalendar();
-         }
-        let ID = '{{sid}}'
-        function toDaily() {
-            var postdata = {
-                ID
+                decemberCalendar();
             }
-            $.ajax({
-                type: 'POST',
-                url: '{{url_for("ajax4")}}',
-                data: JSON.stringify(postdata),
-                dataType: 'JSON',
-                contentType: "application/json",
-                success: function (response) {
-                    $('body').html(response);
-                },
-                error: function (request, status, error) {
-                    alert('ajax 통신 실패')
-                    alert(error);
+            let ID = '{{sid}}'
+            function toDaily() {
+                var postdata = {
+                    ID
                 }
-            })
-        }
-        function fileAttach() {
-            var postdata = {
-                "dt": document.querySelector("#input_date").value,
-                "sid": ID
+                $.ajax({
+                    type: 'POST',
+                    url: '{{url_for("ajax4")}}',
+                    data: JSON.stringify(postdata),
+                    dataType: 'JSON',
+                    contentType: "application/json",
+                    success: function (response) {
+                        $('body').html(response);
+                    },
+                    error: function (request, status, error) {
+                        alert('ajax 통신 실패')
+                        alert(error);
+                    }
+                })
             }
-            var formData = new FormData();
-            document.getElementById("submit").innerHTML = "제출중....";
-            formData.append('data', new Blob([JSON.stringify(postdata)], { type: "application/json" }));
-            $.ajax({
-                type: 'POST',
-                url: '{{url_for("presurvey")}}',
-                data: formData,
-                multiple: true,
-                contentType: false,
-                processData: false,
-                enctype: 'multipart/form-data',
-                success: function (response) {
-                    document.getElementById("submit").innerHTML = "전송";
-                    $('body').html(response);
-                },
-                error: function (request, status, error) {
-                    alert('ajax 통신 실패')
-                    alert(error);
+            function fileAttach() {
+                var postdata = {
+                    "dt": document.querySelector("#input_date").value,
+                    "sid": ID
                 }
-            })
-        }
+                
+                var today_date = new Date().getTime() / 1000;             // 제출하는 날짜
+                var survey_date = new Date(postdata.dt).getTime() / 1000; // 제출하려고 하는 날짜
+                today_date = Math.ceil(today_date)                        // 반올림
+                survey_date = Math.ceil(survey_date)                      // 반올림
+                survey_date = survey_date - 14399;
+                var formData = new FormData();
 
-    </script>
+                if (today_date - survey_date < 345600) {                  // 제한 4일
+                    document.getElementById("submit").innerHTML = "제출중....";
+                    formData.append('data', new Blob([JSON.stringify(postdata)], { type: "application/json" }));
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{url_for("presurvey")}}',
+                        data: formData,
+                        multiple: true,
+                        contentType: false,
+                        processData: false,
+                        enctype: 'multipart/form-data',
+                        success: function (response) {
+                            document.getElementById("submit").innerHTML = "전송";
+                            $('body').html(response);
+                        },
+                        error: function (request, status, error) {
+                            alert('ajax 통신 실패')
+                            alert(error);
+                        }
+                    })
+                }
+                else {
+                    alert("더이상 설문이 불가능한 날짜입니다.")
+                }
+            }
+
+        </script>
 </body>
 
 </html>
