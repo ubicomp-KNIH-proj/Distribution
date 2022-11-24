@@ -5,14 +5,14 @@ def dateToIndex(reg_year, reg_month, reg_day, target_year, target_month, target_
     target = datetime.datetime.strptime(target_year + '-' + target_month + '-' + target_day, "%Y-%m-%d")
 
     index = target - reg
-    return int(index.days)
+    return index.days
 
 def listLength(reg_year, reg_month, reg_day, target_year, target_month, target_day):
     reg = datetime.datetime.strptime(reg_year + '-' + reg_month + '-' + reg_day, "%Y-%m-%d")
     target = datetime.datetime.strptime(target_year + '-' + target_month + '-' + target_day, "%Y-%m-%d")
 
     index = target - reg
-    return int(index.days) + 1
+    return index.days + 1
 
 def monthToInt(month):
     if "Aug":
