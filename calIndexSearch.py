@@ -1,52 +1,34 @@
-from operator import length_hint
+import datetime
 
+def dateToIndex(reg_year, reg_month, reg_day, target_year, target_month, target_day):
+    reg = datetime.datetime.strptime(reg_year + '-' + reg_month + '-' + reg_day, "%Y-%m-%d")
+    target = datetime.datetime.strptime(target_year + '-' + target_month + '-' + target_day, "%Y-%m-%d")
 
-def calIndexSearch(s_m, s_d, a_m, a_d):
-    index = 0
-    if a_m - 1 == s_m:
-        if s_m == 7 or s_m == 8 or s_m == 10 or s_m == 12 or s_m == 1:
-            index = 31 - s_d + a_d
-            return index
-        else:
-            index = 30 - s_d + a_d
-            return index      
-    elif a_m - 2 == s_m:
-        if s_m == 7 or s_m == 8 or s_m == 10 or s_m == 12 or s_m == 1:
-            if a_m - 1 == 7 or a_m - 1 == 8 or a_m - 1 == 10 or a_m - 1 == 12 or a_m - 1 == 1:    
-                index = 31 - s_d + a_d + 31
-                return index
-            else:
-                index = 31 - s_d + a_d + 30
-                return index
-        else:
-            if a_m - 1 == 7 or a_m - 1 == 8 or a_m - 1 == 10 or a_m - 1 == 12 or a_m - 1 == 1:    
-                index = 30 - s_d + a_d + 31
-                return index
-            else:
-                index = 30 - s_d + a_d + 30
-                return index            
-    elif a_m == s_m:
-        if s_m == 7 or s_m == 8 or s_m == 10 or s_m == 12 or s_m == 1:
-            index = a_d - s_d
-            return index
-        else:
-            index = a_d - s_d
-            return index
+    index = target - reg
+    return int(index.days)
 
+def listLength(reg_year, reg_month, reg_day, target_year, target_month, target_day):
+    reg = datetime.datetime.strptime(reg_year + '-' + reg_month + '-' + reg_day, "%Y-%m-%d")
+    target = datetime.datetime.strptime(target_year + '-' + target_month + '-' + target_day, "%Y-%m-%d")
 
-def listLength(s_m, s_d, this_month, today):
-    if this_month - 1 == s_m:
-        if s_m == 7 or s_m == 8 or s_m == 10 or s_m == 12 or s_m == 1:
-            length = 31 - s_d + today
-            return length + 1
-        else:
-            length = 30 - s_d + today
-            return length + 1
+    index = target - reg
+    return int(index.days) + 1
 
-    elif this_month == s_m:
-        if s_m == 7 or s_m == 8 or s_m == 10 or s_m == 12 or s_m == 1:
-            length = today - s_d
-            return length + 1
+def monthToInt(month):
+    if "Aug":
+        return 8
+    elif "Sep":
+        return 9
+    elif "Oct":
+        return 10
+    elif "Nov":
+        return 11
+    elif "Dec":
+        return 12
+# def main():
+#     reg_y, reg_m, reg_d = input("year, month, day: ").split(' ')
+#     tar_y, tar_m, tar_d = input("year, month, day: ").split(' ')
+#     print(dateToIndex(reg_y, reg_m, reg_d, tar_y, tar_m, tar_d))
 
-
-                
+# if __name__ == "__main__":
+#     main()
